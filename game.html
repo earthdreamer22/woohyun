@@ -36,22 +36,6 @@
                     <h1>🧨 폭탄찾기 게임</h1>
                     <p>고전 Minesweeper 게임을 브라우저에서 바로 즐겨보세요.</p>
                 </div>
-                <div class="card-grid">
-                    <article class="card" role="region" aria-labelledby="game-howto">
-                        <h3 id="game-howto">🎯 플레이 방법</h3>
-                        <p>첫 칸을 열면 지뢰가 없는 안전지대가 펼쳐지고, 숫자는 주변 8칸의 지뢰 개수를 뜻합니다. 깃발을 활용해 지뢰 위치를 표시하세요.</p>
-                        <ul class="game-tips">
-                            <li>짧게 클릭(탭)하면 해당 칸을 엽니다</li>
-                            <li>오른쪽 클릭, 두 손가락 탭 또는 길게 눌러 깃발을 토글합니다</li>
-                            <li>모든 지뢰를 표시하거나 안전한 칸을 모두 열면 승리합니다</li>
-                        </ul>
-                    </article>
-                    <article class="card" role="region" aria-labelledby="game-source">
-                        <h3 id="game-source">💻 오픈소스</h3>
-                        <p>이 게임은 <em>nickarocho/minesweeper</em> 오픈소스를 참고하여 제작되었습니다. 공개 라이선스를 준수하며, 학습과 재미를 위한 목적입니다.</p>
-                        <p style="margin-bottom: 0;">난이도에 따라 지뢰 수가 달라지니 여러 난이도로 도전해보세요!</p>
-                    </article>
-                </div>
             </div>
         </section>
 
@@ -77,6 +61,22 @@
                     <div id="statusMessage" class="game-status" role="status" aria-live="polite">첫 칸을 열어보세요! 길게 눌러 깃발을 표시할 수 있어요.</div>
                     <div id="minefield" class="minefield" role="grid" aria-label="폭탄찾기 게임판"></div>
                 </article>
+                <div class="card-grid card-stack" style="margin-top: 2rem;">
+                    <article class="card" role="region" aria-labelledby="game-howto">
+                        <h3 id="game-howto">🎯 플레이 방법</h3>
+                        <p>첫 칸을 열면 지뢰가 없는 안전지대가 펼쳐지고, 숫자는 주변 8칸의 지뢰 개수를 뜻합니다. 깃발을 활용해 지뢰 위치를 표시하세요.</p>
+                        <ul class="game-tips">
+                            <li>짧게 클릭(탭)하면 해당 칸을 엽니다</li>
+                            <li>오른쪽 클릭, 두 손가락 탭 또는 길게 눌러 깃발을 토글합니다</li>
+                            <li>모든 지뢰를 표시하거나 안전한 칸을 모두 열면 승리합니다</li>
+                        </ul>
+                    </article>
+                    <article class="card" role="region" aria-labelledby="game-source">
+                        <h3 id="game-source">💻 오픈소스</h3>
+                        <p>이 게임은 <em>nickarocho/minesweeper</em> 오픈소스를 참고하여 제작되었습니다. 공개 라이선스를 준수하며, 학습과 재미를 위한 목적입니다.</p>
+                        <p style="margin-bottom: 0;">난이도에 따라 지뢰 수가 달라지니 여러 난이도로 도전해보세요!</p>
+                    </article>
+                </div>
             </div>
         </section>
     </main>

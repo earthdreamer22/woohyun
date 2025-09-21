@@ -313,6 +313,33 @@ main {
   }
 }
 
+.card-grid.card-stack {
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 600px) {
+  .card-grid.card-stack {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (min-width: 1024px) {
+  .card-grid.card-stack {
+    grid-template-columns: 1fr;
+  }
+}
+
+.card-grid.card-pair {
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 20px;
+}
+
+@media (min-width: 1024px) {
+  .card-grid.card-pair {
+    grid-template-columns: repeat(2, minmax(280px, 1fr));
+  }
+}
+
 .card {
   background-color: var(--white);
   border-radius: 16px;
@@ -334,6 +361,19 @@ main {
 .card p {
   color: var(--text-muted);
   margin: 0 0 16px;
+}
+
+.btn-contrast {
+  background-color: rgba(30, 58, 138, 0.15);
+  color: var(--text-primary);
+  border: 1px solid rgba(30, 58, 138, 0.15);
+  box-shadow: none;
+}
+
+.btn-contrast:hover {
+  background-color: rgba(30, 58, 138, 0.25);
+  color: var(--deep-blue);
+  box-shadow: none;
 }
 
 /* 페이지별 특별 스타일 */
@@ -544,6 +584,87 @@ footer {
 
 .game-note a:hover {
   color: var(--light-blue);
+}
+
+/* Baseball page theming */
+body.page-baseball {
+  background: linear-gradient(135deg, rgba(4, 10, 22, 0.9) 0%, rgba(14, 28, 55, 0.85) 100%), url('images/lions_wallpaper.jpg') center/cover fixed;
+  color: #f8fafc;
+}
+
+body.page-baseball nav {
+  background: rgba(4, 10, 22, 0.85);
+  box-shadow: none;
+}
+
+body.page-baseball .logo,
+body.page-baseball .nav-links a {
+  color: rgba(255, 255, 255, 0.87);
+}
+
+body.page-baseball .nav-links a:hover,
+body.page-baseball .nav-links a.active {
+  color: #ffffff;
+}
+
+body.page-baseball .hamburger span {
+  background-color: #ffffff;
+}
+
+body.page-baseball main {
+  background: rgba(5, 12, 24, 0.78);
+}
+
+body.page-baseball .page-header h1,
+body.page-baseball .page-header h2 {
+  color: #ffffff;
+}
+
+body.page-baseball .page-header p {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+body.page-baseball .card {
+  background: rgba(9, 18, 36, 0.82);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  color: rgba(248, 250, 252, 0.95);
+}
+
+body.page-baseball .card h3,
+body.page-baseball .card h4 {
+  color: #ffffff;
+}
+
+body.page-baseball .card p,
+body.page-baseball .card li {
+  color: rgba(248, 250, 252, 0.92);
+}
+
+body.page-baseball .card .btn,
+body.page-baseball .btn-contrast {
+  background-color: rgba(255, 255, 255, 0.18);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+}
+
+body.page-baseball .card .btn:hover,
+body.page-baseball .btn-contrast:hover {
+  background-color: rgba(255, 255, 255, 0.32);
+  color: #ffffff;
+}
+
+body.page-baseball .btn-secondary {
+  border-color: rgba(255, 255, 255, 0.45);
+  color: #ffffff;
+}
+
+body.page-baseball .btn-secondary:hover {
+  background-color: rgba(255, 255, 255, 0.22);
+  color: #ffffff;
+}
+
+body.page-baseball footer {
+  background: rgba(4, 10, 22, 0.85);
 }
 
 .sr-only {

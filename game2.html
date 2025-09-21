@@ -36,7 +36,20 @@
                     <h1>🚀 캡틴 로저스</h1>
                     <p>Enclave Games가 만든 HTML5 슈팅 게임을 브라우저에서 바로 플레이하세요.</p>
                 </div>
-                <div class="card-grid">
+                <article class="card" role="region" aria-label="캡틴 로저스 게임">
+                    <div class="embed-container" style="height: 70vh;">
+                        <div class="loading" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);"></div>
+                        <iframe
+                            src="https://enclavegames.github.io/Captain-Rogers/"
+                            title="Captain Rogers HTML5 Game"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowfullscreen
+                            loading="lazy">
+                        </iframe>
+                    </div>
+                    <p class="game-note">※ 임베드가 제한되는 경우 새 창에서 <a href="https://enclavegames.github.io/Captain-Rogers/" target="_blank" rel="noopener noreferrer">캡틴 로저스 게임 페이지</a>를 열어 즐길 수 있습니다.</p>
+                </article>
+                <div class="card-grid card-stack" style="margin-top: 2rem;">
                     <article class="card" role="region" aria-labelledby="game2-about">
                         <h3 id="game2-about">🎮 게임 소개</h3>
                         <p>캡틴 로저스는 운석과 장애물을 피하며 점수를 모으는 캐주얼 슈팅 게임입니다. 간단한 조작과 빠른 템포로 누구나 쉽게 즐길 수 있습니다.</p>
@@ -52,24 +65,6 @@
                         <p style="margin-bottom: 0;">라이선스를 존중하며 학습과 체험을 목적으로 임베드했습니다.</p>
                     </article>
                 </div>
-            </div>
-        </section>
-
-        <section class="section">
-            <div class="container">
-                <article class="card" role="region" aria-label="캡틴 로저스 게임">
-                    <div class="embed-container" style="height: 70vh;">
-                        <div class="loading" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);"></div>
-                        <iframe
-                            src="https://enclavegames.github.io/Captain-Rogers/"
-                            title="Captain Rogers HTML5 Game"
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                            allowfullscreen
-                            loading="lazy">
-                        </iframe>
-                    </div>
-                    <p class="game-note">※ 임베드가 제한되는 경우 새 창에서 <a href="https://enclavegames.github.io/Captain-Rogers/" target="_blank" rel="noopener noreferrer">캡틴 로저스 게임 페이지</a>를 열어 즐길 수 있습니다.</p>
-                </article>
             </div>
         </section>
     </main>

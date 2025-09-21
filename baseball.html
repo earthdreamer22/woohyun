@@ -8,14 +8,14 @@
     <link rel="stylesheet" href="css/style.css">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚾</text></svg>">
 </head>
-<body>
+<body class="page-baseball">
     <!-- 네비게이션 -->
     <nav>
         <div class="nav-container">
             <a href="index.html" class="logo">신우현</a>
             <ul class="nav-links">
                 <li><a href="index.html">홈</a></li>
-                <li><a href="baseball.html">프로야구</a></li>
+                <li><a href="baseball.html" class="active">프로야구</a></li>
                 <li><a href="baduk.html">바둑</a></li>
                 <li><a href="game.html">게임</a></li>
                 <li><a href="game2.html">게임2</a></li>
@@ -34,19 +34,20 @@
             <div class="container">
                 <div class="page-header">
                     <h2>⚾ KBO 프로야구</h2>
-                    <p>Daum 스포츠에서 제공하는 실시간 순위와 경기 정보를 확인해보세요.</p>
+                    <p>Daum 스포츠와 삼성 라이온즈 공식 채널에서 최신 순위와 콘텐츠를 만나보세요.</p>
                 </div>
-            </div>
-        </section>
-
-        <section class="section container" aria-label="프로야구 유용 링크">
-            <h1>프로야구</h1>
-            <div class="card-grid">
-                <article class="card" role="region" aria-labelledby="card-daum-title">
-                    <h3 id="card-daum-title">Daum Sports</h3>
-                    <p>프로야구 실시간 순위</p>
-                    <a class="btn" href="https://sports.daum.net/baseball/" target="_blank" rel="noopener noreferrer" aria-label="Daum Sports 프로야구 실시간 순위 바로 가기">바로 가기</a>
-                </article>
+                <div class="card-grid card-pair" aria-label="프로야구 유용 링크">
+                    <article class="card" role="region" aria-labelledby="card-daum-title">
+                        <h3 id="card-daum-title">Daum Sports</h3>
+                        <p>프로야구 실시간 순위부터 경기 일정, 하이라이트까지 한눈에 확인할 수 있습니다.</p>
+                        <a class="btn btn-contrast" href="https://sports.daum.net/baseball/" target="_blank" rel="noopener noreferrer" aria-label="Daum Sports 프로야구 실시간 순위 바로 가기">바로 가기</a>
+                    </article>
+                    <article class="card" role="region" aria-labelledby="card-lions-title">
+                        <h3 id="card-lions-title">삼성 라이온즈 YouTube</h3>
+                        <p>경기 하이라이트와 선수 비하인드를 삼성 라이온즈 공식 유튜브 채널에서 확인하세요.</p>
+                        <a class="btn btn-contrast" href="https://www.youtube.com/@lionstv1982" target="_blank" rel="noopener noreferrer" aria-label="삼성 라이온즈 공식 유튜브 채널 바로 가기">삼성라이온즈 유튜브 채널</a>
+                    </article>
+                </div>
             </div>
         </section>
 
