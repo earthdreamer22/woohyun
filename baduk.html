@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>바둑 - 신우현의 홈페이지</title>
+    <meta name="description" content="온라인으로 AI와 바둑을 두며 실력을 향상시켜보세요!">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚫</text></svg>">
+</head>
+<body>
+    <!-- 네비게이션 -->
+    <nav>
+        <div class="nav-container">
+            <a href="index.html" class="logo">신우현</a>
+            <ul class="nav-links">
+                <li><a href="index.html">홈</a></li>
+                <li><a href="baseball.html">프로야구</a></li>
+                <li><a href="baduk.html">바둑</a></li>
+                <li><a href="lottery.html">뽑기게임</a></li>
+            </ul>
+            <div class="hamburger" onclick="toggleMobileMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 메인 콘텐츠 -->
+    <main>
+        <div class="page-content">
+            <div class="container">
+                <div class="page-header">
+                    <h1>⚫ 온라인 바둑</h1>
+                    <p>AI와 함께 바둑을 두며 실력을 키워보세요!</p>
+                </div>
+
+                <!-- 바둑 게임 정보 카드 -->
+                <div class="card" style="margin-bottom: 2rem;">
+                    <h3 style="color: var(--gray-700); margin-bottom: 1rem;">🎯 Cosumi 바둑</h3>
+                    <p style="margin-bottom: 1rem;">초보자부터 고수까지 모든 레벨에서 즐길 수 있는 온라인 바둑 게임입니다. 다양한 난이도의 AI와 대국할 수 있습니다.</p>
+                    <div style="display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 1rem;">
+                        <span style="background-color: var(--gray-700); color: white; padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.9rem;">9x9 바둑판</span>
+                        <span style="background-color: var(--black); color: white; padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.9rem;">13x13 바둑판</span>
+                        <span style="background-color: var(--deep-blue); color: white; padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.9rem;">19x19 바둑판</span>
+                    </div>
+                    <div style="margin-top: 1rem;">
+                        <button onclick="openExternalLink('https://www.cosumi.net/ko/')" class="btn" style="background-color: var(--gray-700);">
+                            🔗 원본 사이트 방문
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 임베드 컨테이너 -->
+                <div class="embed-container">
+                    <div class="loading" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);"></div>
+                    <iframe 
+                        src="https://www.cosumi.net/ko/" 
+                        title="Cosumi 온라인 바둑"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowfullscreen>
+                    </iframe>
+                </div>
+
+                <!-- 바둑 기본 규칙 -->
+                <div class="section">
+                    <h2 style="color: var(--deep-blue); margin-bottom: 2rem; text-align: center;">바둑 기본 가이드</h2>
+                    <div class="grid grid-2">
+                        <div class="card">
+                            <h4 style="color: var(--black); margin-bottom: 1rem;">🎮 게임 방법</h4>
+                            <ul style="padding-left: 1.5rem; line-height: 1.8;">
+                                <li>흑돌과 백돌을 번갈아 가며 놓습니다</li>
+                                <li>상대방의 돌을 포위하여 잡습니다</li>
+                                <li>더 많은 집을 만드는 사람이 승리합니다</li>
+                            </ul>
+                        </div>
+                        <div class="card">
+                            <h4 style="color: var(--gray-700); margin-bottom: 1rem;">💡 초보자 팁</h4>
+                            <ul style="padding-left: 1.5rem; line-height: 1.8;">
+                                <li>모서리와 변부터 시작하세요</li>
+                                <li>상대방의 공격을 막는 것도 중요합니다</li>
+                                <li>작은 바둑판부터 연습해보세요</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 바둑의 효과 -->
+                <div class="card" style="background: linear-gradient(135deg, var(--gray-700) 0%, var(--black) 100%); color: white; margin: 2rem 0;">
+                    <h3 style="color: white; margin-bottom: 1rem;">🧠 바둑의 효과</h3>
+                    <div class="grid grid-2" style="gap: 1rem;">
+                        <div>
+                            <h4 style="color: white; margin-bottom: 0.5rem;">집중력 향상</h4>
+                            <p style="color: rgba(255,255,255,0.9);">복잡한 수순을 읽으며 집중력이 향상됩니다</p>
+                        </div>
+                        <div>
+                            <h4 style="color: white; margin-bottom: 0.5rem;">논리적 사고</h4>
+                            <p style="color: rgba(255,255,255,0.9);">수읽기를 통해 논리적 사고력이 발달됩니다</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 돌아가기 버튼 -->
+                <div class="text-center mt-2">
+                    <a href="index.html" class="btn btn-secondary">🏠 홈으로 돌아가기</a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 푸터 -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 신우현의 홈페이지. 바둑으로 두뇌를 단련해보세요! ⚫</p>
+        </div>
+    </footer>
+
+    <script src="js/script.js"></script>
+</body>
+</html>
