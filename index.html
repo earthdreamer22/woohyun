@@ -31,14 +31,16 @@
     <main>
         <!-- 히어로 섹션 -->
         <section class="hero">
-            <div class="hero-content">
-                <h1>안녕하세요! 👋</h1>
-                <p><strong>신우현의 홈페이지</strong>입니다</p>
-                <p class="subtitle">어서오세요 :)</p>
-                <div style="margin-top: 2rem;">
-                    <a href="baseball.html" class="btn">프로야구 보기</a>
-                    <a href="baduk.html" class="btn btn-secondary" style="margin-left: 1rem;">바둑 두기</a>
-                    <a href="lottery.html" class="btn btn-secondary" style="margin-left: 1rem;">뽑기게임</a>
+            <div class="container">
+                <div class="hero-content">
+                    <h1>안녕하세요! 👋</h1>
+                    <p><strong>신우현의 홈페이지</strong>에 오신 것을 환영합니다.</p>
+                    <p class="subtitle">프로야구, 바둑, 뽑기게임을 한곳에서 즐겨보세요.</p>
+                    <div class="hero-actions">
+                        <a href="baseball.html" class="btn">프로야구 보기</a>
+                        <a href="baduk.html" class="btn btn-secondary">바둑 두기</a>
+                        <a href="lottery.html" class="btn btn-secondary">뽑기게임</a>
+                    </div>
                 </div>
             </div>
         </section>
@@ -47,44 +49,38 @@
         <section class="section">
             <div class="container">
                 <h2 class="section-title">즐길 거리</h2>
-                <div class="grid grid-3">
-                    <div class="card feature-card baseball">
-                        <h3 style="color: white; margin-bottom: 1rem;">⚾ 프로야구</h3>
-                        <p style="color: rgba(255,255,255,0.9);">KBO 리그의 최신 경기 현황과 순위를 확인해보세요!</p>
-                        <div style="margin-top: 1.5rem;">
-                            <a href="baseball.html" class="btn" style="background-color: rgba(255,255,255,0.2); border: 2px solid white;">경기 보기</a>
-                        </div>
-                    </div>
-                    <div class="card feature-card baduk">
-                        <h3 style="color: white; margin-bottom: 1rem;">⚫ 바둑</h3>
-                        <p style="color: rgba(255,255,255,0.9);">온라인에서 AI와 바둑을 두며 실력을 향상시켜보세요!</p>
-                        <div style="margin-top: 1.5rem;">
-                            <a href="baduk.html" class="btn" style="background-color: rgba(255,255,255,0.2); border: 2px solid white;">바둑 두기</a>
-                        </div>
-                    </div>
-                    <div class="card feature-card lottery">
-                        <h3 style="color: white; margin-bottom: 1rem;">🎲 뽑기게임</h3>
-                        <p style="color: rgba(255,255,255,0.9);">재미있는 뽑기게임으로 운을 시험해보세요!</p>
-                        <div style="margin-top: 1.5rem;">
-                            <a href="lottery.html" class="btn" style="background-color: rgba(255,255,255,0.2); border: 2px solid white;">게임하기</a>
-                        </div>
-                    </div>
+                <div class="card-grid">
+                    <article class="card" role="region" aria-labelledby="feature-baseball">
+                        <h3 id="feature-baseball">⚾ 프로야구</h3>
+                        <p>KBO 리그의 최신 경기 현황과 순위를 확인해보세요.</p>
+                        <a href="baseball.html" class="btn">경기 보기</a>
+                    </article>
+                    <article class="card" role="region" aria-labelledby="feature-baduk">
+                        <h3 id="feature-baduk">⚫ 바둑</h3>
+                        <p>AI와 바둑을 두며 실력을 향상시켜보세요.</p>
+                        <a href="baduk.html" class="btn">바둑 두기</a>
+                    </article>
+                    <article class="card" role="region" aria-labelledby="feature-lottery">
+                        <h3 id="feature-lottery">🎲 뽑기게임</h3>
+                        <p>간단한 뽑기게임으로 오늘의 행운을 시험해보세요.</p>
+                        <a href="lottery.html" class="btn">게임하기</a>
+                    </article>
                 </div>
             </div>
         </section>
 
         <!-- 소개 섹션 -->
-        <section class="section" style="background-color: var(--gray-100);">
+        <section class="section">
             <div class="container">
-                <div class="grid grid-2">
-                    <div class="card">
-                        <h3 style="color: var(--deep-blue); margin-bottom: 1rem;">🎯 취미</h3>
+                <div class="card-grid">
+                    <article class="card" role="region" aria-labelledby="about-hobby">
+                        <h3 id="about-hobby">🎯 취미</h3>
                         <p>프로야구 관람과 바둑을 좋아하며, 다양한 게임도 즐깁니다.</p>
-                    </div>
-                    <div class="card">
-                        <h3 style="color: var(--deep-blue); margin-bottom: 1rem;">🌟 목표</h3>
-                        <p>재미있고 유용한 콘텐츠를 제공하여 방문자들에게 즐거움을 드리고 싶습니다.</p>
-                    </div>
+                    </article>
+                    <article class="card" role="region" aria-labelledby="about-goal">
+                        <h3 id="about-goal">🌟 목표</h3>
+                        <p>재미있고 유용한 콘텐츠로 여러분께 즐거운 시간을 선사하고 싶습니다.</p>
+                    </article>
                 </div>
             </div>
         </section>
@@ -92,15 +88,15 @@
         <!-- 추천 섹션 -->
         <section class="section">
             <div class="container">
-                <div style="text-align: center; padding: 3rem; background: linear-gradient(135deg, var(--deep-blue) 0%, var(--light-blue) 100%); border-radius: 12px; color: white;">
-                    <h2 style="margin-bottom: 1rem;">오늘은 무엇을 해볼까요?</h2>
-                    <p style="margin-bottom: 2rem; opacity: 0.9;">야구 경기를 보거나, 바둑을 두거나, 재미있는 게임을 즐겨보세요!</p>
-                    <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
-                        <a href="baseball.html" class="btn" style="background-color: rgba(255,255,255,0.2);">⚾ 야구</a>
-                        <a href="baduk.html" class="btn" style="background-color: rgba(255,255,255,0.2);">⚫ 바둑</a>
-                        <a href="lottery.html" class="btn" style="background-color: rgba(255,255,255,0.2);">🎲 게임</a>
+                <article class="card" style="text-align: center; padding: 3rem 2rem;" role="region" aria-labelledby="today-title">
+                    <h2 id="today-title" style="margin-bottom: 1rem;">오늘은 무엇을 해볼까요?</h2>
+                    <p style="margin-bottom: 2rem; color: var(--text-muted);">야구 경기를 보거나, 바둑을 두거나, 재미있는 게임을 즐겨보세요!</p>
+                    <div class="hero-actions" style="justify-content: center;">
+                        <a href="baseball.html" class="btn">⚾ 야구</a>
+                        <a href="baduk.html" class="btn btn-secondary">⚫ 바둑</a>
+                        <a href="lottery.html" class="btn btn-secondary">🎲 게임</a>
                     </div>
-                </div>
+                </article>
             </div>
         </section>
     </main>

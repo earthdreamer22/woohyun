@@ -29,58 +29,47 @@
 
     <!-- 메인 콘텐츠 -->
     <main>
-        <div class="page-content">
+        <section class="section">
             <div class="container">
                 <div class="page-header">
-                    <h1>⚾ KBO 프로야구</h1>
-                    <p>최신 경기 현황과 순위를 확인해보세요!</p>
-                </div>
-
-                <!-- KBO 스탯 정보 카드 -->
-                <div class="card" style="margin-bottom: 2rem;">
-                    <h3 style="color: var(--green); margin-bottom: 1rem;">📊 KBO 리그 현황</h3>
-                    <p style="margin-bottom: 1rem;">2024시즌 KBO 프로야구 경기 현황과 팀 순위를 실시간으로 확인해보세요. 상세한 기록은 아래 링크를 통해 바로 확인할 수 있습니다.</p>
-                    <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
-                        <span style="background-color: var(--green); color: white; padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.9rem;">실시간 순위</span>
-                        <span style="background-color: var(--light-blue); color: white; padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.9rem;">경기 일정</span>
-                        <span style="background-color: var(--orange); color: white; padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.9rem;">선수 기록</span>
-                    </div>
-                    <p style="margin-top: 1.5rem;">
-                        <a href="https://sports.daum.net/baseball/" target="_blank" rel="noopener" class="highlight-link">
-                            📍 Daum 스포츠 - 프로야구 실시간 순위 바로가기
-                        </a>
-                    </p>
-                </div>
-
-                <!-- 임베드 컨테이너 -->
-                <div class="card" style="margin: 2rem 0; text-align: center;">
-                    <p style="font-weight: 600; color: var(--deep-blue); margin-bottom: 0.5rem;">아래 링크에서 실시간 경기 정보와 순위를 확인하세요.</p>
-                    <a href="https://sports.daum.net/baseball/" target="_blank" rel="noopener" class="highlight-link" style="font-size: 1.1rem;">
-                        ▶ Daum 스포츠 프로야구 페이지 열기
-                    </a>
-                </div>
-
-                <!-- 팀 정보 -->
-                <div class="section">
-                    <h2 style="color: var(--deep-blue); margin-bottom: 2rem; text-align: center;">KBO 리그 팀</h2>
-                    <div class="grid grid-2">
-                        <div class="card">
-                            <h4 style="color: var(--green); margin-bottom: 1rem;">🏟️ 10개 구단</h4>
-                            <p>삼성 라이온즈, LG 트윈스, 두산 베어스, 키움 히어로즈, KT 위즈, SSG 랜더스, 롯데 자이언츠, NC 다이노스, 한화 이글스, KIA 타이거즈</p>
-                        </div>
-                        <div class="card">
-                            <h4 style="color: var(--light-blue); margin-bottom: 1rem;">📅 시즌 정보</h4>
-                            <p>정규시즌은 3월부터 10월까지 진행되며, 포스트시즌을 통해 한국시리즈 우승팀을 가립니다.</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 돌아가기 버튼 -->
-                <div class="text-center mt-2">
-                    <a href="index.html" class="btn btn-secondary">🏠 홈으로 돌아가기</a>
+                    <h2>⚾ KBO 프로야구</h2>
+                    <p>Daum 스포츠에서 제공하는 실시간 순위와 경기 정보를 확인해보세요.</p>
                 </div>
             </div>
-        </div>
+        </section>
+
+        <section class="section container" aria-label="프로야구 유용 링크">
+            <h1>프로야구</h1>
+            <div class="card-grid">
+                <article class="card" role="region" aria-labelledby="card-daum-title">
+                    <h3 id="card-daum-title">Daum Sports</h3>
+                    <p>프로야구 실시간 순위</p>
+                    <a class="btn" href="https://sports.daum.net/baseball/" target="_blank" rel="noopener noreferrer" aria-label="Daum Sports 프로야구 실시간 순위 바로 가기">바로 가기</a>
+                </article>
+            </div>
+        </section>
+
+        <section class="section">
+            <div class="container">
+                <div class="card-grid">
+                    <article class="card" role="region" aria-labelledby="team-overview">
+                        <h3 id="team-overview">🏟️ 10개 구단</h3>
+                        <p>삼성 라이온즈, LG 트윈스, 두산 베어스, 키움 히어로즈, KT 위즈, SSG 랜더스, 롯데 자이언츠, NC 다이노스, 한화 이글스, KIA 타이거즈</p>
+                    </article>
+                    <article class="card" role="region" aria-labelledby="season-info">
+                        <h3 id="season-info">📅 시즌 정보</h3>
+                        <p>정규시즌은 3월부터 10월까지 진행되며, 포스트시즌을 통해 한국시리즈 우승팀을 가립니다.</p>
+                    </article>
+                    <article class="card" role="region" aria-labelledby="tip-info">
+                        <h3 id="tip-info">💡 관람 팁</h3>
+                        <p>경기 일정과 선발 투수를 미리 확인하고 응원 도구와 함께 야구장을 방문해보세요.</p>
+                    </article>
+                </div>
+                <div style="margin-top: 2.5rem; text-align: center;">
+                    <a href="index.html" class="btn btn-secondary" aria-label="홈으로 돌아가기">🏠 홈으로 돌아가기</a>
+                </div>
+            </div>
+        </section>
     </main>
 
     <!-- 푸터 -->
@@ -90,32 +79,6 @@
         </div>
     </footer>
 
-    <div id="google_translate_element" aria-hidden="true" style="display: none;"></div>
     <script src="js/script.js"></script>
-    <script>
-        /* global google */
-        function initGoogleTranslate() {
-            new google.translate.TranslateElement({
-                pageLanguage: 'auto',
-                includedLanguages: 'en,ko'
-            }, 'google_translate_element');
-
-            let tries = 0;
-            const applyKorean = () => {
-                const select = document.querySelector('.goog-te-combo');
-                if (select && select.value !== 'ko') {
-                    select.value = 'ko';
-                    select.dispatchEvent(new Event('change'));
-                }
-                if (select || tries > 20) {
-                    clearInterval(timerId);
-                }
-                tries += 1;
-            };
-
-            const timerId = setInterval(applyKorean, 500);
-        }
-    </script>
-    <script src="https://translate.google.com/translate_a/element.js?cb=initGoogleTranslate"></script>
 </body>
 </html>
