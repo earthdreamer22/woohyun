@@ -39,16 +39,11 @@
                 <!-- KBO 스탯 정보 카드 -->
                 <div class="card" style="margin-bottom: 2rem;">
                     <h3 style="color: var(--green); margin-bottom: 1rem;">📊 KBO 리그 현황</h3>
-                    <p style="margin-bottom: 1rem;">2024시즌 KBO 프로야구 경기 현황과 팀 순위, 개인 기록을 실시간으로 확인할 수 있습니다.</p>
-                    <div style="display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 1rem;">
+                    <p style="margin-bottom: 1rem;">2024시즌 KBO 프로야구 경기 현황과 팀 순위, 개인 기록을 실시간으로 확인해보세요. 아래에서 바로 확인할 수 있도록 원본 사이트를 임베딩했습니다.</p>
+                    <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
                         <span style="background-color: var(--green); color: white; padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.9rem;">실시간 순위</span>
                         <span style="background-color: var(--light-blue); color: white; padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.9rem;">경기 일정</span>
                         <span style="background-color: var(--orange); color: white; padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.9rem;">선수 기록</span>
-                    </div>
-                    <div style="margin-top: 1rem;">
-                        <button onclick="openExternalLink('https://mykbostats.com/')" class="btn" style="background-color: var(--green);">
-                            🔗 원본 사이트 방문
-                        </button>
                     </div>
                 </div>
 
@@ -93,6 +88,32 @@
         </div>
     </footer>
 
+    <div id="google_translate_element" aria-hidden="true" style="display: none;"></div>
     <script src="js/script.js"></script>
+    <script>
+        /* global google */
+        function initGoogleTranslate() {
+            new google.translate.TranslateElement({
+                pageLanguage: 'auto',
+                includedLanguages: 'en,ko'
+            }, 'google_translate_element');
+
+            let tries = 0;
+            const applyKorean = () => {
+                const select = document.querySelector('.goog-te-combo');
+                if (select && select.value !== 'ko') {
+                    select.value = 'ko';
+                    select.dispatchEvent(new Event('change'));
+                }
+                if (select || tries > 20) {
+                    clearInterval(timerId);
+                }
+                tries += 1;
+            };
+
+            const timerId = setInterval(applyKorean, 500);
+        }
+    </script>
+    <script src="https://translate.google.com/translate_a/element.js?cb=initGoogleTranslate"></script>
 </body>
 </html>

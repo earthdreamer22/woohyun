@@ -223,6 +223,18 @@ main {
   border: none;
 }
 
+/* Google Translate 자동 적용 시 배너 숨김 */
+#google_translate_element,
+.goog-te-banner-frame,
+.goog-logo-link,
+.goog-te-gadget span {
+  display: none !important;
+}
+
+body {
+  top: 0 !important;
+}
+
 .page-header {
   text-align: center;
   margin-bottom: 3rem;
