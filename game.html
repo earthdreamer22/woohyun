@@ -38,11 +38,11 @@
                 <div class="card-grid">
                     <article class="card" role="region" aria-labelledby="game-howto">
                         <h3 id="game-howto">🎯 플레이 방법</h3>
-                        <p>첫 칸을 클릭하면 지뢰가 없는 안전지대가 열리고, 숫자는 주변 8칸의 지뢰 개수를 뜻합니다. 깃발로 지뢰 위치를 표시하세요.</p>
+                        <p>첫 칸을 열면 지뢰가 없는 안전지대가 펼쳐지고, 숫자는 주변 8칸의 지뢰 개수를 뜻합니다. 깃발을 활용해 지뢰 위치를 표시하세요.</p>
                         <ul class="game-tips">
-                            <li>왼쪽 클릭(탭)으로 칸 열기</li>
-                            <li>오른쪽 클릭(두 손가락 탭)으로 깃발 토글</li>
-                            <li>모든 지뢰를 표시하거나 안전한 칸을 열면 승리</li>
+                            <li>짧게 클릭(탭)하면 해당 칸을 엽니다</li>
+                            <li>오른쪽 클릭, 두 손가락 탭 또는 길게 눌러 깃발을 토글합니다</li>
+                            <li>모든 지뢰를 표시하거나 안전한 칸을 모두 열면 승리합니다</li>
                         </ul>
                     </article>
                     <article class="card" role="region" aria-labelledby="game-source">
@@ -73,7 +73,7 @@
                             <span>시간: <strong id="timerDisplay">0</strong>s</span>
                         </div>
                     </div>
-                    <div id="statusMessage" class="game-status" role="status" aria-live="polite">첫 칸을 열어보세요!</div>
+                    <div id="statusMessage" class="game-status" role="status" aria-live="polite">첫 칸을 열어보세요! 길게 눌러 깃발을 표시할 수 있어요.</div>
                     <div id="minefield" class="minefield" role="grid" aria-label="폭탄찾기 게임판"></div>
                 </article>
             </div>
@@ -96,6 +96,8 @@
                 medium: { width: 12, height: 12, mines: 22 },
                 hard: { width: 14, height: 14, mines: 30 }
             };
+            const LONG_PRESS_DELAY = 500;
+            const pointerTimers = new Map();
 
             const minefieldEl = document.getElementById('minefield');
             const difficultyEl = document.getElementById('difficulty');
@@ -166,6 +168,8 @@
                 timerDisplayEl.textContent = '0';
                 gameOver = false;
                 minefieldEl.innerHTML = '';
+                pointerTimers.forEach(({ timerId }) => clearTimeout(timerId));
+                pointerTimers.clear();
 
                 const config = difficultyMap[difficultyEl.value];
                 boardConfig = { ...config };
@@ -187,6 +191,10 @@
                             handleChord(event);
                         }
                     });
+                    cellButton.addEventListener('pointerdown', event => handlePointerDown(event, index));
+                    cellButton.addEventListener('pointerup', event => handlePointerUp(event, index));
+                    cellButton.addEventListener('pointerleave', event => cancelPointerTimer(event.pointerId));
+                    cellButton.addEventListener('pointercancel', event => cancelPointerTimer(event.pointerId));
 
                     minefieldEl.appendChild(cellButton);
                     return {
@@ -199,7 +207,7 @@
                 });
 
                 updateStats();
-                setStatus('첫 칸을 열어보세요!');
+                setStatus('첫 칸을 열어보세요! 길게 눌러 깃발을 표시할 수 있어요.');
             }
 
             function generateBoard(firstIndex) {
@@ -237,6 +245,10 @@
             function handleReveal(event) {
                 event.preventDefault();
                 const index = Number(event.currentTarget.dataset.index);
+                attemptReveal(index);
+            }
+
+            function attemptReveal(index) {
                 if (gameOver) return;
                 const cell = cells[index];
                 if (cell.revealed || cell.flagged) return;
@@ -281,6 +293,10 @@
             function handleFlag(event) {
                 event.preventDefault();
                 const index = Number(event.currentTarget.dataset.index);
+                toggleFlag(index);
+            }
+
+            function toggleFlag(index) {
                 if (gameOver) return;
                 const cell = cells[index];
                 if (cell.revealed) return;
@@ -346,6 +362,45 @@
                 const totalCells = boardConfig.width * boardConfig.height;
                 if (revealedCount + boardConfig.mines === totalCells) {
                     endGame(true);
+                }
+            }
+
+            function handlePointerDown(event, index) {
+                if (event.pointerType !== 'touch' && event.pointerType !== 'pen') return;
+                if (gameOver) return;
+                event.preventDefault();
+                cancelPointerTimer(event.pointerId);
+                const state = {
+                    index,
+                    longPressTriggered: false
+                };
+                state.timerId = setTimeout(() => {
+                    state.longPressTriggered = true;
+                    toggleFlag(index);
+                }, LONG_PRESS_DELAY);
+                pointerTimers.set(event.pointerId, state);
+            }
+
+            function handlePointerUp(event, index) {
+                if (event.pointerType !== 'touch' && event.pointerType !== 'pen') return;
+                event.preventDefault();
+                const state = pointerTimers.get(event.pointerId);
+                if (state) {
+                    clearTimeout(state.timerId);
+                    pointerTimers.delete(event.pointerId);
+                    if (!state.longPressTriggered) {
+                        attemptReveal(index);
+                    }
+                } else {
+                    attemptReveal(index);
+                }
+            }
+
+            function cancelPointerTimer(pointerId) {
+                const state = pointerTimers.get(pointerId);
+                if (state) {
+                    clearTimeout(state.timerId);
+                    pointerTimers.delete(pointerId);
                 }
             }
 
