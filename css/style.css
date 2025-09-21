@@ -30,6 +30,23 @@ body {
   background-color: var(--white);
 }
 
+.highlight-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--light-blue);
+  font-weight: 600;
+  text-decoration: none;
+  border-bottom: 2px solid rgba(59, 130, 246, 0.3);
+  padding-bottom: 0.1rem;
+  transition: color 0.3s ease, border-color 0.3s ease;
+}
+
+.highlight-link:hover {
+  color: var(--deep-blue);
+  border-color: var(--deep-blue);
+}
+
 /* 네비게이션 */
 nav {
   background-color: var(--white);
@@ -224,12 +241,19 @@ main {
 }
 
 .embed-container.embed-baduk {
-  height: clamp(480px, 80vh, 900px);
+  height: clamp(340px, 60vh, 630px);
+}
+
+.embed-container.embed-baduk iframe {
+  width: calc(100% / 0.7);
+  height: calc(100% / 0.7);
+  transform: scale(0.7);
+  transform-origin: top center;
 }
 
 @media (orientation: landscape) and (max-width: 1100px) {
   .embed-container.embed-baduk {
-    height: min(calc(100vw * 0.75), calc(100vh - 140px));
+    height: min(calc(100vw * 0.525), calc((100vh - 140px) * 0.7));
   }
 }
 

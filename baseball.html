@@ -39,23 +39,25 @@
                 <!-- KBO 스탯 정보 카드 -->
                 <div class="card" style="margin-bottom: 2rem;">
                     <h3 style="color: var(--green); margin-bottom: 1rem;">📊 KBO 리그 현황</h3>
-                    <p style="margin-bottom: 1rem;">2024시즌 KBO 프로야구 경기 현황과 팀 순위를 실시간으로 확인해보세요. 아래에는 KBO 공식 사이트의 일일 팀 순위 페이지를 바로 볼 수 있도록 임베드했습니다.</p>
+                    <p style="margin-bottom: 1rem;">2024시즌 KBO 프로야구 경기 현황과 팀 순위를 실시간으로 확인해보세요. 상세한 기록은 아래 링크를 통해 바로 확인할 수 있습니다.</p>
                     <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
                         <span style="background-color: var(--green); color: white; padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.9rem;">실시간 순위</span>
                         <span style="background-color: var(--light-blue); color: white; padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.9rem;">경기 일정</span>
                         <span style="background-color: var(--orange); color: white; padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.9rem;">선수 기록</span>
                     </div>
+                    <p style="margin-top: 1.5rem;">
+                        <a href="https://sports.daum.net/baseball/" target="_blank" rel="noopener" class="highlight-link">
+                            📍 Daum 스포츠 - 프로야구 실시간 순위 바로가기
+                        </a>
+                    </p>
                 </div>
 
                 <!-- 임베드 컨테이너 -->
-                <div class="embed-container">
-                    <div class="loading" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);"></div>
-                    <iframe 
-                        src="https://www.koreabaseball.com/Record/TeamRank/TeamRankDaily.aspx" 
-                        title="KBO 공식 팀 순위"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                        allowfullscreen>
-                    </iframe>
+                <div class="card" style="margin: 2rem 0; text-align: center;">
+                    <p style="font-weight: 600; color: var(--deep-blue); margin-bottom: 0.5rem;">아래 링크에서 실시간 경기 정보와 순위를 확인하세요.</p>
+                    <a href="https://sports.daum.net/baseball/" target="_blank" rel="noopener" class="highlight-link" style="font-size: 1.1rem;">
+                        ▶ Daum 스포츠 프로야구 페이지 열기
+                    </a>
                 </div>
 
                 <!-- 팀 정보 -->
