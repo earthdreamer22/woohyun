@@ -8,6 +8,7 @@
 - **⚾ 프로야구**: KBO 리그 실시간 경기 현황 및 순위 확인
 - **⚫ 바둑**: 온라인 AI와 바둑 대국
 - **🧨 폭탄찾기 게임**: HTML/JS 기반 Minesweeper 게임 플레이
+- **🚀 캡틴 로저스**: 오픈소스 HTML5 슈팅 게임 임베드
 
 ## 🛠️ 기술 스택
 
@@ -34,6 +35,9 @@
 
 ### 게임 페이지 (game.html)
 - 오픈소스 Minesweeper(`nickarocho/minesweeper`)를 참고하여 구현한 폭탄찾기 게임
+
+### 게임2 페이지 (game2.html)
+- Enclave Games의 Captain Rogers 오픈소스 HTML5 게임 임베드
 - 건전한 게임 문화 안내
 - 다양한 미니게임 제공
 

@@ -531,6 +531,21 @@ footer {
   color: var(--text-muted);
 }
 
+.game-note {
+  margin-top: 1rem;
+  color: var(--gray-700);
+  text-align: center;
+}
+
+.game-note a {
+  color: var(--deep-blue);
+  font-weight: 600;
+}
+
+.game-note a:hover {
+  color: var(--light-blue);
+}
+
 .sr-only {
   position: absolute;
   width: 1px;

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>캡틴 로저스 - 신우현의 홈페이지</title>
+    <meta name="description" content="Enclave Games의 캡틴 로저스(Captain Rogers) HTML5 게임을 바로 즐겨보세요.">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚀</text></svg>">
+</head>
+<body>
+    <!-- 네비게이션 -->
+    <nav>
+        <div class="nav-container">
+            <a href="index.html" class="logo">신우현</a>
+            <ul class="nav-links">
+                <li><a href="index.html">홈</a></li>
+                <li><a href="baseball.html">프로야구</a></li>
+                <li><a href="baduk.html">바둑</a></li>
+                <li><a href="game.html">게임</a></li>
+                <li><a href="game2.html" class="active">게임2</a></li>
+            </ul>
+            <div class="hamburger" onclick="toggleMobileMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 메인 콘텐츠 -->
+    <main>
+        <section class="section">
+            <div class="container">
+                <div class="page-header">
+                    <h1>🚀 캡틴 로저스</h1>
+                    <p>Enclave Games가 만든 HTML5 슈팅 게임을 브라우저에서 바로 플레이하세요.</p>
+                </div>
+                <div class="card-grid">
+                    <article class="card" role="region" aria-labelledby="game2-about">
+                        <h3 id="game2-about">🎮 게임 소개</h3>
+                        <p>캡틴 로저스는 운석과 장애물을 피하며 점수를 모으는 캐주얼 슈팅 게임입니다. 간단한 조작과 빠른 템포로 누구나 쉽게 즐길 수 있습니다.</p>
+                        <ul class="game-tips">
+                            <li>데스크톱: 방향키 또는 좌/우 키로 이동, 스페이스바로 발사</li>
+                            <li>모바일: 화면 좌·우 터치로 이동, 화면 상단 터치로 발사</li>
+                            <li>시간이 지날수록 난이도가 상승하니 집중력을 유지하세요!</li>
+                        </ul>
+                    </article>
+                    <article class="card" role="region" aria-labelledby="game2-source">
+                        <h3 id="game2-source">💻 오픈소스</h3>
+                        <p>이 게임은 <em>EnclaveGames/Captain-Rogers</em> 저장소에서 제공하는 오픈소스 HTML5 게임을 기반으로 합니다.</p>
+                        <p style="margin-bottom: 0;">라이선스를 존중하며 학습과 체험을 목적으로 임베드했습니다.</p>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <div class="container">
+                <article class="card" role="region" aria-label="캡틴 로저스 게임">
+                    <div class="embed-container" style="height: 70vh;">
+                        <div class="loading" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);"></div>
+                        <iframe
+                            src="https://enclavegames.github.io/Captain-Rogers/"
+                            title="Captain Rogers HTML5 Game"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowfullscreen
+                            loading="lazy">
+                        </iframe>
+                    </div>
+                    <p class="game-note">※ 임베드가 제한되는 경우 새 창에서 <a href="https://enclavegames.github.io/Captain-Rogers/" target="_blank" rel="noopener noreferrer">캡틴 로저스 게임 페이지</a>를 열어 즐길 수 있습니다.</p>
+                </article>
+            </div>
+        </section>
+    </main>
+
+    <!-- 푸터 -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 신우현의 홈페이지. HTML5 게임으로 즐거운 시간 보내세요! 🚀</p>
+        </div>
+    </footer>
+
+    <script src="js/script.js"></script>
+</body>
+</html>

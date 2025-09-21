@@ -81,6 +81,9 @@ function initializePageFeatures() {
         case 'game.html':
             initializeGamePage();
             break;
+        case 'game2.html':
+            initializeGame2Page();
+            break;
         default:
             break;
     }
@@ -99,6 +102,11 @@ function initializeBadukPage() {
 function initializeGamePage() {
     console.log('게임 페이지 초기화');
     // 폭탄찾기 관련 추가 기능이 필요하면 여기에 작성
+}
+
+function initializeGame2Page() {
+    console.log('게임2 페이지 초기화');
+    // 캡틴 로저스 관련 특별 기능이 필요하면 여기에 추가
 }
 
 // 페이지 로드 완료 후 초기화
