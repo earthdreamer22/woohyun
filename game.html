@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>폭탄찾기 게임 - 신우현의 홈페이지</title>
+    <meta name="description" content="HTML과 자바스크립트로 구현된 폭탄찾기(Minesweeper) 게임을 즐겨보세요.">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧨</text></svg>">
+</head>
+<body>
+    <!-- 네비게이션 -->
+    <nav>
+        <div class="nav-container">
+            <a href="index.html" class="logo">신우현</a>
+            <ul class="nav-links">
+                <li><a href="index.html">홈</a></li>
+                <li><a href="baseball.html">프로야구</a></li>
+                <li><a href="baduk.html">바둑</a></li>
+                <li><a href="game.html" class="active">게임</a></li>
+            </ul>
+            <div class="hamburger" onclick="toggleMobileMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 메인 콘텐츠 -->
+    <main>
+        <section class="section">
+            <div class="container">
+                <div class="page-header">
+                    <h1>🧨 폭탄찾기 게임</h1>
+                    <p>고전 Minesweeper 게임을 브라우저에서 바로 즐겨보세요.</p>
+                </div>
+                <div class="card-grid">
+                    <article class="card" role="region" aria-labelledby="game-howto">
+                        <h3 id="game-howto">🎯 플레이 방법</h3>
+                        <p>첫 칸을 클릭하면 지뢰가 없는 안전지대가 열리고, 숫자는 주변 8칸의 지뢰 개수를 뜻합니다. 깃발로 지뢰 위치를 표시하세요.</p>
+                        <ul class="game-tips">
+                            <li>왼쪽 클릭(탭)으로 칸 열기</li>
+                            <li>오른쪽 클릭(두 손가락 탭)으로 깃발 토글</li>
+                            <li>모든 지뢰를 표시하거나 안전한 칸을 열면 승리</li>
+                        </ul>
+                    </article>
+                    <article class="card" role="region" aria-labelledby="game-source">
+                        <h3 id="game-source">💻 오픈소스</h3>
+                        <p>이 게임은 <em>nickarocho/minesweeper</em> 오픈소스를 참고하여 제작되었습니다. 공개 라이선스를 준수하며, 학습과 재미를 위한 목적입니다.</p>
+                        <p style="margin-bottom: 0;">난이도에 따라 지뢰 수가 달라지니 여러 난이도로 도전해보세요!</p>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <div class="container">
+                <article class="card game-card" role="region" aria-label="폭탄찾기 게임">
+                    <div class="game-toolbar">
+                        <div class="game-controls">
+                            <label for="difficulty" class="sr-only">난이도 선택</label>
+                            <select id="difficulty" aria-label="난이도 선택">
+                                <option value="easy">쉬움 · 9x9 · 지뢰 10개</option>
+                                <option value="medium" selected>보통 · 12x12 · 지뢰 22개</option>
+                                <option value="hard">어려움 · 14x14 · 지뢰 30개</option>
+                            </select>
+                            <button class="btn" id="resetGame" type="button">다시 시작</button>
+                        </div>
+                        <div class="game-stats" aria-live="polite">
+                            <span>지뢰: <strong id="mineTotal">0</strong></span>
+                            <span>표시: <strong id="flagCount">0</strong></span>
+                            <span>시간: <strong id="timerDisplay">0</strong>s</span>
+                        </div>
+                    </div>
+                    <div id="statusMessage" class="game-status" role="status" aria-live="polite">첫 칸을 열어보세요!</div>
+                    <div id="minefield" class="minefield" role="grid" aria-label="폭탄찾기 게임판"></div>
+                </article>
+            </div>
+        </section>
+    </main>
+
+    <!-- 푸터 -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 신우현의 홈페이지. 즐거운 게임 시간 되세요! 🧨</p>
+        </div>
+    </footer>
+
+    <script src="js/script.js"></script>
+    <script>
+        // Minesweeper implementation inspired by https://github.com/nickarocho/minesweeper
+        (function() {
+            const difficultyMap = {
+                easy: { width: 9, height: 9, mines: 10 },
+                medium: { width: 12, height: 12, mines: 22 },
+                hard: { width: 14, height: 14, mines: 30 }
+            };
+
+            const minefieldEl = document.getElementById('minefield');
+            const difficultyEl = document.getElementById('difficulty');
+            const resetBtn = document.getElementById('resetGame');
+            const mineTotalEl = document.getElementById('mineTotal');
+            const flagCountEl = document.getElementById('flagCount');
+            const timerDisplayEl = document.getElementById('timerDisplay');
+            const statusMessageEl = document.getElementById('statusMessage');
+
+            let cells = [];
+            let boardConfig = { width: 0, height: 0, mines: 0 };
+            let boardGenerated = false;
+            let revealedCount = 0;
+            let flagCount = 0;
+            let timerId = null;
+            let secondsElapsed = 0;
+            let gameOver = false;
+
+            function indexFromXY(x, y) {
+                return y * boardConfig.width + x;
+            }
+
+            function getNeighbors(x, y) {
+                const result = [];
+                for (let dy = -1; dy <= 1; dy++) {
+                    for (let dx = -1; dx <= 1; dx++) {
+                        if (dx === 0 && dy === 0) continue;
+                        const nx = x + dx;
+                        const ny = y + dy;
+                        if (nx >= 0 && nx < boardConfig.width && ny >= 0 && ny < boardConfig.height) {
+                            result.push({ x: nx, y: ny, index: indexFromXY(nx, ny) });
+                        }
+                    }
+                }
+                return result;
+            }
+
+            function startTimer() {
+                if (timerId) return;
+                timerId = setInterval(() => {
+                    secondsElapsed += 1;
+                    timerDisplayEl.textContent = secondsElapsed;
+                }, 1000);
+            }
+
+            function stopTimer() {
+                if (timerId) {
+                    clearInterval(timerId);
+                    timerId = null;
+                }
+            }
+
+            function updateStats() {
+                mineTotalEl.textContent = boardConfig.mines;
+                flagCountEl.textContent = flagCount;
+            }
+
+            function setStatus(message) {
+                statusMessageEl.textContent = message;
+            }
+
+            function resetGame() {
+                stopTimer();
+                boardGenerated = false;
+                revealedCount = 0;
+                flagCount = 0;
+                secondsElapsed = 0;
+                timerDisplayEl.textContent = '0';
+                gameOver = false;
+                minefieldEl.innerHTML = '';
+
+                const config = difficultyMap[difficultyEl.value];
+                boardConfig = { ...config };
+                minefieldEl.style.setProperty('--cols', boardConfig.width);
+                minefieldEl.setAttribute('aria-rowcount', boardConfig.height);
+                minefieldEl.setAttribute('aria-colcount', boardConfig.width);
+
+                cells = new Array(boardConfig.width * boardConfig.height).fill(null).map((_, index) => {
+                    const cellButton = document.createElement('button');
+                    cellButton.className = 'cell hidden';
+                    cellButton.type = 'button';
+                    cellButton.setAttribute('data-index', index);
+                    cellButton.setAttribute('aria-label', '닫힌 칸');
+                    cellButton.addEventListener('click', handleReveal);
+                    cellButton.addEventListener('contextmenu', handleFlag);
+                    cellButton.addEventListener('auxclick', event => {
+                        if (event.button === 1) {
+                            event.preventDefault();
+                            handleChord(event);
+                        }
+                    });
+
+                    minefieldEl.appendChild(cellButton);
+                    return {
+                        element: cellButton,
+                        mine: false,
+                        adjacent: 0,
+                        revealed: false,
+                        flagged: false
+                    };
+                });
+
+                updateStats();
+                setStatus('첫 칸을 열어보세요!');
+            }
+
+            function generateBoard(firstIndex) {
+                const availableIndices = cells.map((_, i) => i).filter(i => i !== firstIndex);
+                shuffleArray(availableIndices);
+                const mineIndices = availableIndices.slice(0, boardConfig.mines);
+
+                mineIndices.forEach(i => {
+                    cells[i].mine = true;
+                });
+
+                cells.forEach((cell, index) => {
+                    if (cell.mine) return;
+                    const { x, y } = xyFromIndex(index);
+                    const neighbors = getNeighbors(x, y);
+                    cell.adjacent = neighbors.filter(n => cells[n.index].mine).length;
+                });
+
+                boardGenerated = true;
+            }
+
+            function xyFromIndex(index) {
+                const x = index % boardConfig.width;
+                const y = Math.floor(index / boardConfig.width);
+                return { x, y };
+            }
+
+            function shuffleArray(array) {
+                for (let i = array.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [array[i], array[j]] = [array[j], array[i]];
+                }
+            }
+
+            function handleReveal(event) {
+                event.preventDefault();
+                const index = Number(event.currentTarget.dataset.index);
+                if (gameOver) return;
+                const cell = cells[index];
+                if (cell.revealed || cell.flagged) return;
+
+                if (!boardGenerated) {
+                    generateBoard(index);
+                    startTimer();
+                }
+
+                revealCell(index);
+                checkWinCondition();
+            }
+
+            function revealCell(index) {
+                const cell = cells[index];
+                if (cell.revealed || cell.flagged) return;
+
+                cell.revealed = true;
+                cell.element.classList.remove('hidden');
+                cell.element.classList.add('revealed');
+                cell.element.setAttribute('aria-pressed', 'true');
+                revealedCount += 1;
+
+                if (cell.mine) {
+                    cell.element.classList.add('mine');
+                    cell.element.textContent = '💣';
+                    endGame(false);
+                    return;
+                }
+
+                if (cell.adjacent > 0) {
+                    cell.element.textContent = cell.adjacent;
+                    cell.element.dataset.count = cell.adjacent;
+                } else {
+                    const { x, y } = xyFromIndex(index);
+                    getNeighbors(x, y).forEach(({ index: neighborIndex }) => {
+                        revealCell(neighborIndex);
+                    });
+                }
+            }
+
+            function handleFlag(event) {
+                event.preventDefault();
+                const index = Number(event.currentTarget.dataset.index);
+                if (gameOver) return;
+                const cell = cells[index];
+                if (cell.revealed) return;
+
+                cell.flagged = !cell.flagged;
+                if (cell.flagged) {
+                    cell.element.classList.add('flagged');
+                    cell.element.textContent = '🚩';
+                    cell.element.setAttribute('aria-label', '깃발 표시된 칸');
+                    flagCount += 1;
+                } else {
+                    cell.element.classList.remove('flagged');
+                    cell.element.textContent = '';
+                    cell.element.setAttribute('aria-label', '닫힌 칸');
+                    flagCount -= 1;
+                }
+                updateStats();
+                checkWinCondition();
+            }
+
+            function handleChord(event) {
+                const index = Number(event.currentTarget.dataset.index);
+                const cell = cells[index];
+                if (!cell.revealed || cell.adjacent === 0) return;
+
+                const { x, y } = xyFromIndex(index);
+                const neighbors = getNeighbors(x, y);
+                const flaggedNeighbors = neighbors.filter(n => cells[n.index].flagged).length;
+                if (flaggedNeighbors !== cell.adjacent) return;
+
+                neighbors.forEach(n => {
+                    if (!cells[n.index].flagged) {
+                        revealCell(n.index);
+                    }
+                });
+                checkWinCondition();
+            }
+
+            function revealAllMines() {
+                cells.forEach(cell => {
+                    if (cell.mine) {
+                        cell.element.classList.remove('hidden');
+                        cell.element.classList.add('revealed', 'mine');
+                        cell.element.textContent = '💣';
+                    }
+                });
+            }
+
+            function endGame(won) {
+                gameOver = true;
+                stopTimer();
+                if (won) {
+                    setStatus('축하합니다! 모든 지뢰를 찾았습니다.');
+                } else {
+                    setStatus('지뢰를 밟았어요! 다시 도전해보세요.');
+                    revealAllMines();
+                }
+                cells.forEach(cell => cell.element.disabled = true);
+            }
+
+            function checkWinCondition() {
+                if (gameOver) return;
+                const totalCells = boardConfig.width * boardConfig.height;
+                if (revealedCount + boardConfig.mines === totalCells) {
+                    endGame(true);
+                }
+            }
+
+            difficultyEl.addEventListener('change', resetGame);
+            resetBtn.addEventListener('click', resetGame);
+            minefieldEl.addEventListener('contextmenu', event => event.preventDefault());
+
+            resetGame();
+        })();
+    </script>
+</body>
+</html>

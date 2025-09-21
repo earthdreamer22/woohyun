@@ -2,23 +2,24 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
 :root {
-  --deep-blue: #0d1b2a;
-  --light-blue: #1b263b;
-  --mid-blue: #2b3a67;
+  --deep-blue: #1e3a8a;
+  --light-blue: #3b82f6;
+  --mid-blue: #4f8bff;
   --white: #ffffff;
-  --text-primary: #ffffff;
-  --text-muted: rgba(255, 255, 255, 0.85);
-  --button-bg: #3a5ba0;
-  --button-bg-hover: #4b6fbf;
-  --container-max: 960px;
-  --focus-ring: rgba(255, 255, 255, 0.85);
-  --shadow: 0 10px 24px rgba(0, 0, 0, 0.25);
-  --gray-100: rgba(255, 255, 255, 0.06);
-  --gray-200: rgba(255, 255, 255, 0.12);
-  --gray-700: rgba(255, 255, 255, 0.7);
-  --gray-900: #050c18;
-  --green: #4ac4a7;
-  --purple: #9c8bff;
+  --text-primary: #111827;
+  --text-muted: #4b5563;
+  --button-bg: #ffffff;
+  --button-bg-hover: #f3f4f6;
+  --container-max: 1200px;
+  --focus-ring: rgba(30, 58, 138, 0.4);
+  --shadow: 0 4px 12px rgba(15, 23, 42, 0.15);
+  --shadow-lg: 0 12px 24px rgba(15, 23, 42, 0.2);
+  --gray-100: #f3f4f6;
+  --gray-200: #e5e7eb;
+  --gray-700: #374151;
+  --black: #000000;
+  --green: #10b981;
+  --purple: #8b5cf6;
   --orange: #f59e0b;
 }
 
@@ -32,17 +33,18 @@ body {
   font-family: 'Inter', sans-serif;
   line-height: 1.6;
   color: var(--text-primary);
-  background: linear-gradient(135deg, #0d1b2a 0%, #1b263b 50%, #2b3a67 100%);
+  background-color: var(--white);
   min-height: 100vh;
 }
 
 a {
-  color: #9fb7ff;
+  color: var(--light-blue);
   text-decoration: none;
+  transition: color 0.2s ease;
 }
 
 a:hover {
-  color: #c8d6ff;
+  color: var(--deep-blue);
 }
 
 a:focus-visible,
@@ -71,8 +73,7 @@ button:focus-visible,
 
 /* 네비게이션 */
 nav {
-  background: rgba(4, 10, 22, 0.8);
-  backdrop-filter: blur(6px);
+  background-color: var(--white);
   box-shadow: var(--shadow);
   position: fixed;
   top: 0;
@@ -92,7 +93,7 @@ nav {
 .logo {
   font-size: 1.5rem;
   font-weight: 700;
-  color: var(--text-primary);
+  color: var(--deep-blue);
   text-decoration: none;
 }
 
@@ -104,13 +105,14 @@ nav {
 
 .nav-links a {
   text-decoration: none;
-  color: var(--text-muted);
+  color: var(--gray-700);
   font-weight: 500;
   transition: color 0.3s ease;
 }
 
-.nav-links a:hover {
-  color: var(--text-primary);
+.nav-links a:hover,
+.nav-links a.active {
+  color: var(--deep-blue);
 }
 
 .hamburger {
@@ -122,7 +124,7 @@ nav {
 .hamburger span {
   width: 25px;
   height: 3px;
-  background-color: var(--text-primary);
+  background-color: var(--deep-blue);
   margin: 3px 0;
   transition: 0.3s;
 }
@@ -133,12 +135,18 @@ main {
 }
 
 .hero {
-  min-height: 80vh;
+  min-height: calc(100vh - 80px);
   display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
-  padding: 4rem 1.5rem;
+  padding: 6rem 2rem;
+  background: linear-gradient(135deg, var(--deep-blue) 0%, var(--light-blue) 100%);
+  color: var(--white);
+}
+
+.hero-content {
+  max-width: 720px;
 }
 
 .hero-content h1 {
@@ -148,72 +156,96 @@ main {
 }
 
 .hero-content p {
-  font-size: 1.5rem;
-  margin-bottom: 0.5rem;
+  font-size: 1.25rem;
+  margin-bottom: 1.5rem;
+  opacity: 0.9;
 }
 
-.hero-content {
-  max-width: 720px;
+.hero-content .subtitle {
+  font-size: 1rem;
+  margin-bottom: 2.5rem;
+  opacity: 0.85;
 }
 
 .hero-actions {
-  margin-top: 2.5rem;
+  margin-top: 2rem;
   display: flex;
   flex-wrap: wrap;
   gap: 1rem;
   justify-content: center;
 }
 
-.subtitle {
-  font-size: 1.2rem !important;
-  color: var(--text-muted) !important;
-  font-weight: 500;
-}
-
 .btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0.85rem 1.8rem;
+  display: inline-block;
+  padding: 1rem 2rem;
   background-color: var(--button-bg);
-  color: var(--text-primary);
+  color: var(--deep-blue);
   text-decoration: none;
-  border-radius: 12px;
+  border-radius: 10px;
   font-weight: 600;
   border: none;
-  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.3);
-  transition: background 0.2s ease, transform 0.06s ease, box-shadow 0.2s ease;
-  cursor: pointer;
+  box-shadow: var(--shadow);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
 }
 
 .btn:hover {
-  background-color: var(--button-bg-hover);
   transform: translateY(-2px);
-  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.35);
-}
-
-.btn:active {
-  transform: translateY(0);
+  background-color: var(--button-bg-hover);
+  box-shadow: var(--shadow-lg);
 }
 
 .btn-secondary {
   background-color: transparent;
-  border: 2px solid rgba(255, 255, 255, 0.5);
-  color: var(--text-primary);
+  color: var(--deep-blue);
+  border: 2px solid var(--deep-blue);
 }
 
 .btn-secondary:hover {
-  background-color: rgba(255, 255, 255, 0.1);
+  background-color: var(--deep-blue);
+  color: var(--white);
+}
+
+.hero .btn-secondary {
+  color: var(--white);
+  border-color: var(--white);
+}
+
+.hero .btn-secondary:hover {
+  background-color: var(--white);
+  color: var(--deep-blue);
+}
+
+.card .btn {
+  background-color: var(--deep-blue);
+  color: var(--white);
+  box-shadow: none;
+}
+
+.card .btn:hover {
+  background-color: var(--light-blue);
+  color: var(--white);
+  box-shadow: none;
+}
+
+.card .btn.btn-secondary {
+  background-color: transparent;
+  color: var(--deep-blue);
+  border: 2px solid var(--deep-blue);
+}
+
+.card .btn.btn-secondary:hover {
+  background-color: var(--deep-blue);
+  color: var(--white);
 }
 
 /* 섹션 스타일 */
 
 .section {
-  padding: 4.5rem 0;
+  padding: 5rem 0;
 }
 
 .section.surface {
-  background: rgba(255, 255, 255, 0.05);
+  background-color: var(--white);
   border-radius: 24px;
   box-shadow: var(--shadow);
   padding: 3rem;
@@ -233,12 +265,12 @@ main {
 }
 
 .section.container {
-  padding: 4.5rem 16px;
+  padding: 5rem 16px;
 }
 
 @media (min-width: 768px) {
   .section.container {
-    padding: 4.5rem 24px;
+    padding: 5rem 24px;
   }
 }
 
@@ -247,6 +279,7 @@ main {
   font-weight: 700;
   margin-bottom: 2.5rem;
   text-align: center;
+  color: var(--deep-blue);
 }
 
 .grid {
@@ -281,26 +314,26 @@ main {
 }
 
 .card {
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  background-color: var(--white);
   border-radius: 16px;
-  padding: 20px;
+  padding: 24px;
   box-shadow: var(--shadow);
-  transition: background 0.2s ease, transform 0.06s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .card:hover {
-  background: rgba(255, 255, 255, 0.12);
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
 }
 
 .card h3 {
-  color: var(--white);
-  margin: 0 0 8px;
+  color: var(--deep-blue);
+  margin: 0 0 12px;
 }
 
 .card p {
   color: var(--text-muted);
-  margin: 0 0 14px;
+  margin: 0 0 16px;
 }
 
 /* 페이지별 특별 스타일 */
@@ -348,41 +381,166 @@ main {
 
 .page-header h1,
 .page-header h2 {
-  color: var(--text-primary);
+  color: var(--deep-blue);
   font-size: 2.5rem;
   margin-bottom: 1rem;
 }
 
 .page-header p {
-  color: var(--text-muted);
+  color: var(--gray-700);
   font-size: 1.2rem;
 }
 
 /* 특별한 카드 스타일 */
 .feature-card {
-  background: rgba(255, 255, 255, 0.08);
+  background-color: var(--white);
   color: var(--text-primary);
   text-align: center;
 }
 
-.feature-card.baseball {
-  background: rgba(255, 255, 255, 0.1);
-}
-
-.feature-card.baduk {
-  background: rgba(255, 255, 255, 0.1);
-}
-
+.feature-card.baseball,
+.feature-card.baduk,
 .feature-card.lottery {
-  background: rgba(255, 255, 255, 0.1);
+  background-color: var(--white);
 }
 
 /* 푸터 */
 footer {
-  background: rgba(3, 9, 20, 0.85);
-  color: var(--text-primary);
+  background-color: var(--deep-blue);
+  color: var(--white);
   text-align: center;
-  padding: 2rem 0;
+  padding: 2rem;
+  margin-top: 5rem;
+}
+
+/* 게임 페이지 전용 스타일 */
+.game-card {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.game-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.game-controls {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.game-controls select {
+  padding: 0.7rem 1rem;
+  border-radius: 10px;
+  border: 1px solid var(--gray-200);
+  background-color: var(--white);
+  color: var(--text-primary);
+  font-weight: 500;
+  min-width: 200px;
+}
+
+.game-stats {
+  display: flex;
+  gap: 1.25rem;
+  font-weight: 600;
+  color: var(--deep-blue);
+}
+
+.game-stats span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.game-status {
+  padding: 0.75rem 1rem;
+  border-radius: 10px;
+  background-color: var(--gray-100);
+  color: var(--gray-700);
+  font-weight: 600;
+  text-align: center;
+}
+
+.minefield {
+  --cols: 12;
+  display: grid;
+  gap: 4px;
+  justify-content: center;
+  grid-template-columns: repeat(var(--cols), 36px);
+  margin: 0 auto;
+  padding: 0.5rem;
+  background-color: var(--gray-100);
+  border-radius: 16px;
+  box-shadow: inset 0 1px 2px rgba(15, 23, 42, 0.1);
+}
+
+.cell {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  border: none;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: transform 0.05s ease, background-color 0.1s ease;
+}
+
+.cell.hidden {
+  background: linear-gradient(135deg, #edf2ff 0%, #dbeafe 100%);
+  color: var(--deep-blue);
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.15);
+}
+
+.cell.hidden:hover {
+  transform: translateY(-1px);
+}
+
+.cell.revealed {
+  background-color: var(--white);
+  color: var(--deep-blue);
+  box-shadow: inset 0 1px 2px rgba(15, 23, 42, 0.1);
+}
+
+.cell.mine {
+  background-color: #fee2e2;
+  color: #b91c1c;
+}
+
+.cell.flagged {
+  background-color: #fef3c7;
+  color: #92400e;
+}
+
+.cell[data-count="1"] { color: #2563eb; }
+.cell[data-count="2"] { color: #16a34a; }
+.cell[data-count="3"] { color: #dc2626; }
+.cell[data-count="4"] { color: #7c3aed; }
+.cell[data-count="5"] { color: #0f172a; }
+.cell[data-count="6"] { color: #0d9488; }
+.cell[data-count="7"] { color: #6b21a8; }
+.cell[data-count="8"] { color: #0ea5e9; }
+
+.game-tips {
+  padding-left: 1.25rem;
+  line-height: 1.7;
+  color: var(--text-muted);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 /* 반응형 디자인 */
@@ -410,6 +568,17 @@ footer {
   .embed-container {
     height: 60vh;
   }
+
+  .minefield {
+    grid-template-columns: repeat(var(--cols), 32px);
+    gap: 3px;
+  }
+
+  .cell {
+    width: 32px;
+    height: 32px;
+    font-size: 0.9rem;
+  }
 }
 
 @media (max-width: 480px) {
@@ -427,6 +596,17 @@ footer {
   
   .container {
     padding: 0 1rem;
+  }
+
+  .minefield {
+    grid-template-columns: repeat(var(--cols), 28px);
+    gap: 2px;
+  }
+
+  .cell {
+    width: 28px;
+    height: 28px;
+    font-size: 0.85rem;
   }
 }
 

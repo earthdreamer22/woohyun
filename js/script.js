@@ -78,8 +78,8 @@ function initializePageFeatures() {
         case 'baduk.html':
             initializeBadukPage();
             break;
-        case 'lottery.html':
-            initializeLotteryPage();
+        case 'game.html':
+            initializeGamePage();
             break;
         default:
             break;
@@ -96,9 +96,9 @@ function initializeBadukPage() {
     // 바둑 관련 특별 기능이 필요하면 여기에 추가
 }
 
-function initializeLotteryPage() {
-    console.log('뽑기게임 페이지 초기화');
-    // 뽑기게임 관련 특별 기능이 필요하면 여기에 추가
+function initializeGamePage() {
+    console.log('게임 페이지 초기화');
+    // 폭탄찾기 관련 추가 기능이 필요하면 여기에 작성
 }
 
 // 페이지 로드 완료 후 초기화
