@@ -771,3 +771,110 @@ body.page-baseball footer {
 .mt-2 { margin-top: 2rem; }
 .mb-2 { margin-bottom: 2rem; }
 .p-2 { padding: 2rem; }
+
+/* Moon page styling */
+body.page-moon {
+  background-color: var(--gray-100);
+}
+
+body.page-moon main {
+  background: none;
+}
+
+.section-alt {
+  background-color: var(--gray-100);
+}
+
+body.page-moon .section-alt .container {
+  background-color: transparent;
+}
+
+.location-card {
+  margin-bottom: 2rem;
+}
+
+.location-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.location-meta h3 {
+  margin-bottom: 0.5rem;
+}
+
+.location-name {
+  margin-top: 0.4rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.weather-grid .card,
+.moon-grid .card {
+  text-align: center;
+}
+
+.data-highlight {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--deep-blue);
+  margin-bottom: 0.5rem;
+}
+
+.data-subtitle {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+}
+
+.update-card {
+  margin-top: 2rem;
+  text-align: center;
+  background-color: var(--gray-100);
+}
+
+body.page-moon .section-alt .update-card {
+  background-color: var(--white);
+}
+
+.update-text {
+  font-weight: 600;
+  margin-bottom: 0.4rem;
+  color: var(--deep-blue);
+}
+
+.update-status {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+}
+
+.tip-card {
+  margin-top: 2.5rem;
+  text-align: center;
+}
+
+.tip-card .btn {
+  margin-top: 1rem;
+}
+
+.moon-emoji {
+  font-size: 4rem;
+  margin-top: 0.75rem;
+}
+
+#refresh-btn[disabled] {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+@media (max-width: 768px) {
+  .location-meta {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .data-highlight {
+    font-size: 1.8rem;
+  }
+}

@@ -84,6 +84,9 @@ function initializePageFeatures() {
         case 'game2.html':
             initializeGame2Page();
             break;
+        case 'moon.html':
+            initializeMoonPage();
+            break;
         default:
             break;
     }
@@ -107,6 +110,11 @@ function initializeGamePage() {
 function initializeGame2Page() {
     console.log('게임2 페이지 초기화');
     // 캡틴 로저스 관련 특별 기능이 필요하면 여기에 추가
+}
+
+function initializeMoonPage() {
+    console.log('달 정보 페이지 초기화');
+    // moon.html 전용 동작은 js/moon.js에서 처리합니다.
 }
 
 // 페이지 로드 완료 후 초기화
