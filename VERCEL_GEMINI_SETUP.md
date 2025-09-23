@@ -15,6 +15,7 @@
 3. 서버리스 함수/CORS 수정 사항이 있을 때마다 `vercel --prod`로 재배포.
 
 ## 3. 환경 변수 (Gemini API Key)
+- 기본 단어 난이도는 JLPT N3로 요청되며, 필요하면 API 본문에서 `level` 값을 원하는 JLPT 등급으로 바꿀 수 있습니다.
 - `vercel env add GEMINI_API_KEY production`
 - (Preview/Development 환경이 필요하면 동일 명령으로 추가 가능)
 - 키는 절대 저장소에 커밋하지 말 것.

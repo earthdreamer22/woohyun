@@ -25,7 +25,7 @@ module.exports = async function handler(req, res) {
     }
 
     const count = clampNumber(body.count, 1, 10, 5);
-    const level = typeof body.level === 'string' ? body.level : 'beginner';
+    const level = typeof body.level === 'string' ? body.level : 'JLPT N3';
 
     const prompt = buildPrompt(count, level);
 
@@ -86,8 +86,10 @@ module.exports = async function handler(req, res) {
 
 function buildPrompt(count, level) {
     return [
-        '당신은 일본어 교사입니다.',
+        '당신은 일본어 교사이며 JLPT 대비 학습자를 지도합니다.',
         `학습 수준은 ${level}이며, 일본어 단어 객관식 문제 ${count}개를 생성하세요.`,
+        '단어는 지정된 레벨에서 자주 등장하는 핵심 어휘여야 합니다.',
+        '각 단어에 대해 일본어 표기(한자/가나)와 읽기(후리가나)를 함께 제시하고, 의미와 설명은 자연스럽고 정확한 한국어로 작성하세요.',
         '각 문제는 다음 JSON 배열 형태로만 출력합니다.',
         '[',
         '{',
