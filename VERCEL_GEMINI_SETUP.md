@@ -5,12 +5,13 @@
 ## 1. 전체 구성
 - 프론트엔드: `japanese.html`, `js/japanese.js` 등 정적 파일은 GitHub Pages에서 제공.
 - 백엔드(프록시): `api/gemini.js`는 Vercel 서버리스 함수로 배포되어 Gemini API 요청을 중계.
-- 프론트 코드는 기본적으로 `https://woohyun-homepage-fy36ppocc-earth-shins-projects.vercel.app/api/gemini` 엔드포인트를 호출한다.
+- 프론트 코드는 기본적으로 `https://woohyun-homepage.vercel.app/api/gemini` 엔드포인트를 호출한다.
+  - 임시 서브 도메인(예: `-fy36ppocc-earth-shins-projects` 등)은 배포마다 바뀌므로 사용하지 않는다.
   - 필요하면 페이지에서 `window.__GEMINI_PROXY__ = '다른주소';` 를 지정해 교체 가능.
 
 ## 2. Vercel 프로젝트 생성 (CLI)
 1. 프로젝트 루트에서 `vercel` 실행 → Git 연결 없이 새 프로젝트 생성.
-2. 생성 후 Production URL: `https://woohyun-homepage-fy36ppocc-earth-shins-projects.vercel.app` (배포마다 서브도메인이 달라질 수 있음).
+2. 생성 후 기본 Production URL: `https://woohyun-homepage.vercel.app` (임시 서브 도메인은 매 배포마다 달라짐).
 3. 서버리스 함수/CORS 수정 사항이 있을 때마다 `vercel --prod`로 재배포.
 
 ## 3. 환경 변수 (Gemini API Key)
@@ -23,7 +24,7 @@
 - Google Gemini REST API(`gemini-pro:generateContent`) 호출.
 - JSON 파싱/보기 보정 후 `{ items: [...] }` 구조로 응답.
 - CORS 지원: `Access-Control-Allow-Origin: *`, `OPTIONS` 프리플라이트 처리.
-- 엔드포인트 예: `https://woohyun-homepage-fy36ppocc-earth-shins-projects.vercel.app/api/gemini`
+- 엔드포인트 예: `https://woohyun-homepage.vercel.app/api/gemini`
 
 ## 5. 프론트엔드 스크립트 (`js/japanese.js`)
 - `DEFAULT_ENDPOINT`를 Vercel 프록시 주소로 설정.

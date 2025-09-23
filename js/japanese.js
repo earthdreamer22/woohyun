@@ -3,7 +3,7 @@
     const QUIZ_COUNT = 5;
     const QUIZ_STORAGE_KEY = 'japaneseQuizCache:v1';
     // window.__GEMINI_PROXY__ 값을 지정하면 다른 프록시 주소로 덮어쓸 수 있습니다.
-    const DEFAULT_ENDPOINT = 'https://woohyun-homepage-iahblq9eb-earth-shins-projects.vercel.app/api/gemini';
+    const DEFAULT_ENDPOINT = 'https://woohyun-homepage.vercel.app/api/gemini';
     const QUIZ_ENDPOINT = window.__GEMINI_PROXY__ || DEFAULT_ENDPOINT;
 
     const state = {
