@@ -244,9 +244,8 @@
         updateText('sunrise', `일출: ${state.times.sunrise || '--:--'}`);
         updateText('sunset', `일몰: ${state.times.sunset || '--:--'}`);
 
-        const waxingText = state.isWaxing ? '왁싱 (상현으로 가는 길)' : '워닝 (하현으로 가는 길)';
         const phaseDisplay = state.descriptors.ko || '달 위상 정보 없음';
-        updateText('moon-phase-text', `${phaseDisplay} · ${waxingText}`);
+        updateText('moon-phase-text', phaseDisplay);
 
         updateMoonGraphic(state);
 
@@ -295,12 +294,12 @@
 
         const progress = age / SYNODIC_MONTH;
         const phaseMap = {
-            new: { ko: '신월', en: 'New Moon' },
+            new: { ko: '삭', en: 'New Moon' },
             waxing_crescent: { ko: '초승달', en: 'Waxing Crescent' },
             first_quarter: { ko: '상현달', en: 'First Quarter' },
-            waxing_gibbous: { ko: '상현 이후 달', en: 'Waxing Gibbous' },
-            full: { ko: '보름달', en: 'Full Moon' },
-            waning_gibbous: { ko: '하현 전 달', en: 'Waning Gibbous' },
+            waxing_gibbous: { ko: '상현달 이후', en: 'Waxing Gibbous' },
+            full: { ko: '보름달 (망)', en: 'Full Moon' },
+            waning_gibbous: { ko: '보름 이후 달', en: 'Waning Gibbous' },
             last_quarter: { ko: '하현달', en: 'Last Quarter' },
             waning_crescent: { ko: '그믐달', en: 'Waning Crescent' }
         };
