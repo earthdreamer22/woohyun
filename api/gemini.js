@@ -1,4 +1,4 @@
-const GEMINI_ENDPOINT = 'https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash-latest:generateContent';
+const GEMINI_ENDPOINT = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent';
 const FALLBACK_DISTRACTORS = ['공원', '병원', '책상', '자동차', '가족', '식사', '음식', '산책', '저녁', '아침'];
 
 module.exports = async function handler(req, res) {
