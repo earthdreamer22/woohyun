@@ -1,9 +1,12 @@
 // moon.js - 날씨와 달 위상 정보를 불러와 moon.html에 표시하는 스크립트
 (function() {
-    const WEATHER_ENDPOINT = 'https://apihub.kma.go.kr/api/typ02/openApi/VilageFcstInfoService_2.0/getUltraSrtNcst';
-    const WEATHER_API_KEY = 'A-QSlscIRIWkEpbHCGSFKw';
-    const MOON_ENDPOINT = 'http://apis.data.go.kr/B090041/openapi/service/LunPhInfoService/getLunPhInfo';
-    const MOON_API_KEY = 'A-QSlscIRIWkEpbHCGSFKw';
+    const WEATHER_ENDPOINT = 'https://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getUltraSrtNcst';
+    const WEATHER_API_KEY = 'bSXLOVZXJBTb5kP+LeHxYhdGontFNILjji6zaVtQu7Sd3U+NBp7nKIMuwf+xARrxS0Vl8oLD+NVpyjcTRMAFyA==';
+    const MOON_ENDPOINT = 'https://apis.data.go.kr/B090041/openapi/service/LunPhInfoService/getLunPhInfo';
+    const MOON_API_KEY = 'bSXLOVZXJBTb5kP+LeHxYhdGontFNILjji6zaVtQu7Sd3U+NBp7nKIMuwf+xARrxS0Vl8oLD+NVpyjcTRMAFyA==';
+    const SYNODIC_MONTH = 29.530588;
+    const MOON_CACHE_KEY = 'moonPhaseCache:v1';
+    let moonGraphicRenderCount = 0;
 
     const GRID = {
         nx: 89,
@@ -39,39 +42,42 @@
     function fetchWeatherData() {
         const { baseDate, baseTime, kstDate } = getLatestBaseTimestamp();
         const params = new URLSearchParams({
+            serviceKey: WEATHER_API_KEY,
+            dataType: 'JSON',
             pageNo: '1',
             numOfRows: '1000',
-            dataType: 'XML',
             base_date: baseDate,
             base_time: baseTime,
             nx: String(GRID.nx),
-            ny: String(GRID.ny),
-            authKey: WEATHER_API_KEY
+            ny: String(GRID.ny)
         });
         const url = `${WEATHER_ENDPOINT}?${params.toString()}`;
         updateText('weather-status', '기상청 API에 요청 중입니다...');
 
         fetch(url)
             .then(assertOk)
-            .then(res => res.text())
+            .then(res => res.json())
             .then(parseWeatherResponse)
             .then(data => applyWeatherData(data, kstDate))
             .catch(err => handleWeatherError(err));
     }
 
-    function parseWeatherResponse(xmlText) {
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(xmlText, 'application/xml');
-        const items = Array.from(doc.querySelectorAll('item'));
-        if (!items.length) {
-            throw new Error('기상청 응답에 데이터가 없습니다.');
+    function parseWeatherResponse(json) {
+        const header = json?.response?.header;
+        if (header && header.resultCode !== '00') {
+            throw new Error(`기상청 응답 오류: ${header.resultMsg || header.resultCode}`);
+        }
+        const items = json?.response?.body?.items?.item;
+        if (!items || (Array.isArray(items) && items.length === 0)) {
+            throw new Error('기상청 응답에 관측 데이터가 없습니다.');
         }
         const data = {};
-        items.forEach(item => {
-            const category = textContent(item, 'category');
-            const value = textContent(item, 'obsrValue');
+        const list = Array.isArray(items) ? items : [items];
+        list.forEach(item => {
+            const category = item?.category;
+            const value = item?.obsrValue;
             if (category) {
-                data[category.trim()] = value;
+                data[String(category).trim()] = value;
             }
         });
         return data;
@@ -116,63 +122,345 @@
 
     function fetchMoonPhaseData() {
         const kstNow = getKSTDate();
-        const year = kstNow.getFullYear();
-        const month = String(kstNow.getMonth() + 1).padStart(2, '0');
-        const day = String(kstNow.getDate()).padStart(2, '0');
+        const dateKey = formatDateKey(kstNow);
+        const cachedState = readMoonCache(dateKey);
+
+        if (cachedState) {
+            applyMoonState(cachedState, { fromCache: true });
+        }
 
         const params = new URLSearchParams({
-            solYear: String(year),
-            solMonth: month,
-            solDay: day,
-            serviceKey: MOON_API_KEY,
-            _type: 'json'
+            solYear: String(kstNow.getFullYear()),
+            solMonth: String(kstNow.getMonth() + 1).padStart(2, '0'),
+            solDay: String(kstNow.getDate()).padStart(2, '0'),
+            serviceKey: MOON_API_KEY
         });
         const url = `${MOON_ENDPOINT}?${params.toString()}`;
-        updateText('moon-status', '달 위상 API에 요청 중입니다...');
+
+        updateText('moon-status', cachedState ? '저장된 데이터를 바탕으로 최신 값을 확인하는 중입니다...' : '달 위상 API에 요청 중입니다...');
 
         fetch(url)
             .then(assertOk)
-            .then(res => res.json())
+            .then(res => res.text())
             .then(parseMoonResponse)
-            .then(data => applyMoonData(data, kstNow))
-            .catch(err => handleMoonError(err));
+            .then(raw => buildMoonState(raw, kstNow))
+            .then(state => {
+                applyMoonState(state);
+                saveMoonCache(dateKey, state);
+            })
+            .catch(err => handleMoonError(err, cachedState));
     }
 
-    function parseMoonResponse(json) {
-        const body = json?.response?.body;
-        const items = body?.items?.item;
-        if (!items) {
+    function parseMoonResponse(xmlText) {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(xmlText, 'application/xml');
+        if (doc.querySelector('parsererror')) {
+            throw new Error('달 위상 응답을 해석하지 못했습니다.');
+        }
+
+        const header = doc.querySelector('header');
+        const resultCode = header ? getNodeText(header, 'resultCode') : null;
+        if (resultCode && resultCode !== '00') {
+            const message = header ? getNodeText(header, 'resultMsg') : '';
+            throw new Error(`달 위상 응답 오류: ${message || resultCode}`);
+        }
+
+        const itemNode = doc.querySelector('body items item');
+        if (!itemNode) {
             throw new Error('달 위상 응답에 데이터가 없습니다.');
         }
-        return Array.isArray(items) ? items[0] : items;
+
+        const data = {};
+        Array.from(itemNode.children).forEach(child => {
+            const key = child.tagName ? child.tagName.toLowerCase() : '';
+            if (key) {
+                data[key] = child.textContent.trim();
+            }
+        });
+        return data;
     }
 
-    function applyMoonData(data, timestamp) {
-        const age = formatNumber(data?.lunAge || data?.lunAgeDay, 1);
-        updateText('moon-age', age !== null ? `${age} 일` : '-- 일');
+    function buildMoonState(raw, timestamp) {
+        const ageValue = parseFloat(raw.lunage ?? raw.lunageday ?? raw.age);
+        const normalizedAge = normalizeLunarAge(ageValue);
+        const phaseAngle = Number.isFinite(normalizedAge) ? (2 * Math.PI * normalizedAge) / SYNODIC_MONTH : null;
+        const illuminatedFraction = Number.isFinite(phaseAngle) ? clamp((1 - Math.cos(phaseAngle)) / 2, 0, 1) : null;
+        const percentIlluminated = illuminatedFraction !== null ? Math.round(illuminatedFraction * 1000) / 10 : null;
 
-        const illumination = formatNumber(data?.iradiance || data?.sunMoonIllumination, 1);
-        updateText('illumination', illumination !== null ? `조도 ${illumination}%` : '조도 정보를 확인할 수 없습니다');
+        const isFullMoon = Number.isFinite(phaseAngle) && Math.abs(phaseAngle - Math.PI) < 1e-3;
+        const isNewMoon = Number.isFinite(phaseAngle) && (phaseAngle < 1e-3 || phaseAngle > 2 * Math.PI - 1e-3);
+        const isWaxing = Number.isFinite(phaseAngle)
+            ? (isFullMoon ? false : (isNewMoon ? true : phaseAngle < Math.PI))
+            : false;
 
-        updateText('moon-rise', `출: ${formatTime(data?.moonrise)}`);
-        updateText('moon-set', `몰: ${formatTime(data?.moonset)}`);
+        const descriptors = describeLunarPhase(normalizedAge, illuminatedFraction, isWaxing, raw);
 
-        updateText('sunrise', `일출: ${formatTime(data?.sunrise)}`);
-        updateText('sunset', `일몰: ${formatTime(data?.sunset)}`);
+        return {
+            timestamp: timestamp.toISOString(),
+            age: normalizedAge,
+            phaseAngle,
+            illuminatedFraction,
+            percentIlluminated,
+            isWaxing,
+            descriptors,
+            times: {
+                moonrise: formatTime(raw.moonrise ?? raw.moonRise),
+                moonset: formatTime(raw.moonset ?? raw.moonSet),
+                sunrise: formatTime(raw.sunrise ?? raw.sunRise),
+                sunset: formatTime(raw.sunset ?? raw.sunSet)
+            }
+        };
+    }
 
-        const phaseText = data?.lunPhaseName || data?.phaseName || derivePhaseName(age);
-        updateText('moon-phase-text', phaseText || '달 위상 정보 없음');
-        updateMoonEmoji(phaseText, age);
+    function applyMoonState(state, options = {}) {
+        if (!state) {
+            updateText('moon-status', '달 위상 정보를 표시할 수 없습니다.');
+            updateText('moon-phase-text', '달 위상 정보 없음');
+            updateMoonGraphic(null);
+            return;
+        }
 
-        updateText('moon-status', '달 위상 데이터가 업데이트되었습니다.');
-        updateText('moon-updated', formatKST(timestamp));
+        const ageText = Number.isFinite(state.age) ? `${state.age.toFixed(1)} 일` : '-- 일';
+        updateText('moon-age', ageText);
+
+        if (state.percentIlluminated !== null) {
+            const illuminationPercent = state.percentIlluminated.toFixed(1);
+            updateText('illumination', `조도 ${illuminationPercent}%`);
+        } else {
+            updateText('illumination', '조도 정보를 확인할 수 없습니다');
+        }
+
+        updateText('moon-rise', `출: ${state.times.moonrise || '--:--'}`);
+        updateText('moon-set', `몰: ${state.times.moonset || '--:--'}`);
+        updateText('sunrise', `일출: ${state.times.sunrise || '--:--'}`);
+        updateText('sunset', `일몰: ${state.times.sunset || '--:--'}`);
+
+        const waxingText = state.isWaxing ? '왁싱 (상현으로 가는 길)' : '워닝 (하현으로 가는 길)';
+        const phaseDisplay = state.descriptors.ko || '달 위상 정보 없음';
+        updateText('moon-phase-text', `${phaseDisplay} · ${waxingText}`);
+
+        updateMoonGraphic(state);
+
+        const updatedDate = new Date(state.timestamp);
+        updateText('moon-updated', Number.isNaN(updatedDate.getTime()) ? '시간 정보 없음' : formatKST(updatedDate));
+        updateText('moon-status', options.fromCache ? '이전 저장값을 표시 중입니다. 최신 데이터를 확인하는 중...' : '달 위상 데이터가 업데이트되었습니다.');
         setRefreshState(false);
     }
 
-    function handleMoonError(err) {
+    function handleMoonError(err, fallbackState) {
         console.error('Moon API error', err);
-        updateText('moon-status', '달 위상 정보를 불러오지 못했습니다. (서비스키 또는 CORS 설정을 확인하세요)');
+        if (fallbackState) {
+            updateText('moon-status', '실시간 데이터를 불러오지 못했습니다. 마지막 저장값을 유지합니다. (서비스키 또는 CORS 설정을 확인하세요)');
+        } else {
+            updateText('moon-status', '달 위상 정보를 불러오지 못했습니다. (서비스키 또는 CORS 설정을 확인하세요)');
+            updateMoonGraphic(null);
+        }
         setRefreshState(false);
+    }
+
+    function getNodeText(parent, selector) {
+        const node = parent?.querySelector(selector);
+        return node ? node.textContent.trim() : '';
+    }
+
+    function normalizeLunarAge(age) {
+        if (!Number.isFinite(age)) {
+            return null;
+        }
+        let normalized = age % SYNODIC_MONTH;
+        if (normalized < 0) {
+            normalized += SYNODIC_MONTH;
+        }
+        return normalized;
+    }
+
+    function describeLunarPhase(age, fraction, isWaxing, raw) {
+        const fallback = (raw?.lunphasename ?? raw?.phasename ?? '').trim();
+        if (!Number.isFinite(age) || fraction === null) {
+            return {
+                ko: fallback || '달 위상 정보 없음',
+                en: fallback || 'Unknown phase',
+                stage: 'unknown'
+            };
+        }
+
+        const progress = age / SYNODIC_MONTH;
+        const phaseMap = {
+            new: { ko: '신월', en: 'New Moon' },
+            waxing_crescent: { ko: '초승달', en: 'Waxing Crescent' },
+            first_quarter: { ko: '상현달', en: 'First Quarter' },
+            waxing_gibbous: { ko: '상현 이후 달', en: 'Waxing Gibbous' },
+            full: { ko: '보름달', en: 'Full Moon' },
+            waning_gibbous: { ko: '하현 전 달', en: 'Waning Gibbous' },
+            last_quarter: { ko: '하현달', en: 'Last Quarter' },
+            waning_crescent: { ko: '그믐달', en: 'Waning Crescent' }
+        };
+
+        let key = 'new';
+        if (progress < 0.03 || progress >= 0.97) {
+            key = 'new';
+        } else if (progress < 0.22) {
+            key = 'waxing_crescent';
+        } else if (progress < 0.28) {
+            key = 'first_quarter';
+        } else if (progress < 0.47) {
+            key = 'waxing_gibbous';
+        } else if (progress < 0.53) {
+            key = 'full';
+        } else if (progress < 0.72) {
+            key = 'waning_gibbous';
+        } else if (progress < 0.78) {
+            key = 'last_quarter';
+        } else {
+            key = 'waning_crescent';
+        }
+
+        const descriptor = phaseMap[key] ?? phaseMap.new;
+        return {
+            ko: fallback || descriptor.ko,
+            en: descriptor.en,
+            stage: key,
+            waxingLabel: isWaxing ? 'Waxing' : 'Waning'
+        };
+    }
+
+    function updateMoonGraphic(state) {
+        const container = document.getElementById('moon-graphic');
+        if (!container) return;
+
+        if (!state || state.illuminatedFraction === null) {
+            container.innerHTML = '<span aria-hidden="true">🌘</span>';
+            container.setAttribute('aria-label', '달 위상을 표시할 수 없습니다');
+            return;
+        }
+
+        const svgMarkup = renderMoonSVG(state.illuminatedFraction, state.isWaxing, state.phaseAngle);
+        container.innerHTML = svgMarkup;
+
+        const illuminationLabel = state.percentIlluminated !== null ? `${state.percentIlluminated.toFixed(1)}% illuminated` : 'illumination unknown';
+        const phaseLabel = state.descriptors?.en || 'Unknown phase';
+        const waxingLabel = state.isWaxing ? 'Waxing' : 'Waning';
+        container.setAttribute('aria-label', `Moon phase: ${phaseLabel} · ${illuminationLabel} · ${waxingLabel}`);
+    }
+
+    function renderMoonSVG(fraction, isWaxing, phaseAngle) {
+        moonGraphicRenderCount += 1;
+        const clipId = `moon-phase-clip-${moonGraphicRenderCount}`;
+        const angle = Number.isFinite(phaseAngle) ? phaseAngle : 0;
+        const direction = isWaxing ? 1 : -1;
+        const normalizedAngle = isWaxing ? angle : (2 * Math.PI - angle);
+        const pathData = buildClipPathFromAngle(normalizedAngle, direction);
+
+        if (fraction !== null && fraction <= 0.005) {
+            return [
+                '<svg viewBox="0 0 100 100" role="presentation" aria-hidden="true">',
+                '<circle cx="50" cy="50" r="48" fill="var(--moon-shadow)" />',
+                '<circle cx="50" cy="50" r="48" fill="none" stroke="var(--moon-stroke)" stroke-width="1.5" />',
+                '</svg>'
+            ].join('');
+        }
+
+        if (fraction !== null && fraction >= 0.995) {
+            return [
+                '<svg viewBox="0 0 100 100" role="presentation" aria-hidden="true">',
+                '<circle cx="50" cy="50" r="48" fill="var(--moon-lit)" />',
+                '<circle cx="50" cy="50" r="48" fill="none" stroke="var(--moon-stroke)" stroke-width="1.5" />',
+                '</svg>'
+            ].join('');
+        }
+
+        return [
+            `<svg viewBox="0 0 100 100" role="presentation" aria-hidden="true">`,
+            '<defs>',
+            `<clipPath id="${clipId}" clipPathUnits="userSpaceOnUse">`,
+            `<path d="${pathData}" />`,
+            '</clipPath>',
+            '</defs>',
+            '<circle cx="50" cy="50" r="48" fill="var(--moon-shadow)" />',
+            `<circle cx="50" cy="50" r="48" fill="var(--moon-lit)" clip-path="url(#${clipId})" />`,
+            '<circle cx="50" cy="50" r="48" fill="none" stroke="var(--moon-stroke)" stroke-width="1.5" />',
+            '</svg>'
+        ].join('');
+    }
+
+    function buildClipPathFromAngle(angle, direction) {
+        const radius = 48;
+        const cx = 50;
+        const cy = 50;
+        const steps = 120;
+        const cosPhase = Math.cos(angle);
+
+        const outerPoints = [];
+        const innerPoints = [];
+        for (let i = 0; i <= steps; i += 1) {
+            const t = i / steps;
+            const y = -radius + 2 * radius * t;
+            const outerX = Math.sqrt(Math.max(0, radius * radius - y * y));
+            const terminatorX = clamp(cosPhase * outerX, -outerX, outerX);
+
+            outerPoints.push({
+                x: cx + direction * outerX,
+                y: cy + y
+            });
+            innerPoints.push({
+                x: cx + direction * terminatorX,
+                y: cy + y
+            });
+        }
+
+        const points = outerPoints.concat(innerPoints.reverse());
+        if (!points.length) {
+            return '';
+        }
+
+        let path = `M${points[0].x.toFixed(2)} ${points[0].y.toFixed(2)}`;
+        for (let i = 1; i < points.length; i += 1) {
+            path += `L${points[i].x.toFixed(2)} ${points[i].y.toFixed(2)}`;
+        }
+        path += 'Z';
+        return path;
+    }
+
+    function formatDateKey(date) {
+        if (!(date instanceof Date)) {
+            return '';
+        }
+        const y = date.getFullYear();
+        const m = String(date.getMonth() + 1).padStart(2, '0');
+        const d = String(date.getDate()).padStart(2, '0');
+        return `${y}-${m}-${d}`;
+    }
+
+    function readMoonCache(dateKey) {
+        if (typeof window === 'undefined' || !window.localStorage) {
+            return null;
+        }
+        try {
+            const raw = window.localStorage.getItem(MOON_CACHE_KEY);
+            if (!raw) return null;
+            const parsed = JSON.parse(raw);
+            if (parsed?.dateKey === dateKey && parsed?.state) {
+                return parsed.state;
+            }
+        } catch (error) {
+            console.warn('Moon cache read failed', error);
+        }
+        return null;
+    }
+
+    function saveMoonCache(dateKey, state) {
+        if (typeof window === 'undefined' || !window.localStorage) {
+            return;
+        }
+        try {
+            const payload = {
+                dateKey,
+                state
+            };
+            window.localStorage.setItem(MOON_CACHE_KEY, JSON.stringify(payload));
+        } catch (error) {
+            console.warn('Moon cache save failed', error);
+        }
     }
 
     function calculateSensibleTemperature(data) {
@@ -226,46 +514,6 @@
         return `${directions[index]} (${degrees.toFixed(0)}°)`;
     }
 
-    function derivePhaseName(age) {
-        if (!Number.isFinite(age)) {
-            return null;
-        }
-        if (age < 1) return '신월';
-        if (age < 6.382646) return '삭 이후 초승달';
-        if (age < 8.382646) return '상현 전 초승달';
-        if (age < 12.765293) return '상현달';
-        if (age < 16.765293) return '상현 이후 달';
-        if (age < 18.765293) return '보름달';
-        if (age < 23.14794) return '하현 전 보름달';
-        if (age < 26.14794) return '하현달';
-        if (age < 29) return '그믐달';
-        return '신월';
-    }
-
-    function updateMoonEmoji(phaseText, age) {
-        const element = document.getElementById('moon-emoji');
-        if (!element) return;
-        let emoji = '🌘';
-        if (phaseText) {
-            if (phaseText.includes('신월')) emoji = '🌑';
-            else if (phaseText.includes('초승')) emoji = '🌒';
-            else if (phaseText.includes('상현')) emoji = '🌓';
-            else if (phaseText.includes('보름')) emoji = '🌕';
-            else if (phaseText.includes('하현')) emoji = '🌗';
-            else if (phaseText.includes('그믐')) emoji = '🌘';
-        } else if (Number.isFinite(age)) {
-            if (age < 1) emoji = '🌑';
-            else if (age < 6) emoji = '🌒';
-            else if (age < 9) emoji = '🌓';
-            else if (age < 15) emoji = '🌔';
-            else if (age < 17) emoji = '🌕';
-            else if (age < 22) emoji = '🌖';
-            else if (age < 26) emoji = '🌗';
-            else emoji = '🌘';
-        }
-        element.textContent = emoji;
-    }
-
     function formatTime(value) {
         if (!value) {
             return '--:--';
@@ -283,6 +531,19 @@
             return null;
         }
         return number.toFixed(fractionDigits);
+    }
+
+    function clamp(value, min, max) {
+        if (!Number.isFinite(value)) {
+            return null;
+        }
+        if (Number.isFinite(min) && value < min) {
+            return min;
+        }
+        if (Number.isFinite(max) && value > max) {
+            return max;
+        }
+        return value;
     }
 
     function formatKST(date) {
@@ -325,11 +586,6 @@
             throw new Error(`HTTP ${response.status}`);
         }
         return response;
-    }
-
-    function textContent(parent, selector) {
-        const value = parent.querySelector(selector);
-        return value ? value.textContent : '';
     }
 
     function updateText(id, text) {

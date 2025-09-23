@@ -858,9 +858,35 @@ body.page-moon .section-alt .update-card {
   margin-top: 1rem;
 }
 
-.moon-emoji {
+.moon-graphic {
+  width: 120px;
+  height: 120px;
+  margin: 0.75rem auto 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  --moon-lit: #f7f9ff;
+  --moon-shadow: #141722;
+  --moon-stroke: rgba(255, 255, 255, 0.35);
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.25));
+}
+
+.moon-graphic svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.moon-graphic span {
   font-size: 4rem;
-  margin-top: 0.75rem;
+}
+
+@media (prefers-color-scheme: light) {
+  .moon-graphic {
+    --moon-shadow: #24324b;
+    --moon-stroke: rgba(0, 0, 0, 0.22);
+    filter: drop-shadow(0 4px 10px rgba(28, 41, 66, 0.28));
+  }
 }
 
 #refresh-btn[disabled] {
