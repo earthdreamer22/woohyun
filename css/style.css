@@ -889,6 +889,99 @@ body.page-moon .section-alt .update-card {
   }
 }
 
+.moon-lesson-card {
+  margin-top: 2rem;
+}
+
+.moon-lesson-intro {
+  margin-bottom: 1.2rem;
+  color: var(--text-muted);
+}
+
+.moon-lesson-sequence {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.moon-lesson-step {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.6rem 0.9rem;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.04);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+  min-width: 190px;
+}
+
+@media (prefers-color-scheme: light) {
+  .moon-lesson-step {
+    background: rgba(18, 42, 74, 0.06);
+    box-shadow: inset 0 0 0 1px rgba(18, 42, 74, 0.08);
+  }
+}
+
+.moon-lesson-text strong {
+  display: block;
+  font-size: 1.05rem;
+  margin-bottom: 0.2rem;
+}
+
+.moon-lesson-text p {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.moon-lesson-arrow {
+  font-size: 1.5rem;
+  color: var(--accent);
+}
+
+.moon-lesson-icon {
+  width: 64px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  --moon-lit: #f7f9ff;
+  --moon-shadow: #141722;
+  --moon-stroke: rgba(255, 255, 255, 0.35);
+  filter: drop-shadow(0 3px 8px rgba(0, 0, 0, 0.22));
+}
+
+.moon-lesson-icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+@media (prefers-color-scheme: light) {
+  .moon-lesson-icon {
+    --moon-shadow: #24324b;
+    --moon-stroke: rgba(0, 0, 0, 0.2);
+    filter: drop-shadow(0 3px 8px rgba(28, 41, 66, 0.22));
+  }
+}
+
+@media (max-width: 768px) {
+  .moon-lesson-sequence {
+    gap: 0.75rem;
+  }
+
+  .moon-lesson-step {
+    flex: 1 1 100%;
+    justify-content: flex-start;
+  }
+
+  .moon-lesson-arrow {
+    display: none;
+  }
+}
+
 #refresh-btn[disabled] {
   opacity: 0.6;
   cursor: wait;

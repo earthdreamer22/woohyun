@@ -90,21 +90,64 @@
                         <p class="data-highlight" id="moon-age">-- 일</p>
                         <p class="data-subtitle" id="illumination">조도 --%</p>
                     </article>
-                    <article class="card" role="region" aria-labelledby="moon-rise-title">
-                        <h3 id="moon-rise-title">달 출/몰</h3>
-                        <p class="data-highlight" id="moon-rise">출: --:--</p>
-                        <p class="data-subtitle" id="moon-set">몰: --:--</p>
-                    </article>
-                    <article class="card" role="region" aria-labelledby="sun-info-title">
-                        <h3 id="sun-info-title">태양 정보</h3>
-                        <p class="data-highlight" id="sunrise">일출: --:--</p>
-                        <p class="data-subtitle" id="sunset">일몰: --:--</p>
-                    </article>
                     <article class="card" role="region" aria-labelledby="moon-phase-title">
                         <h3 id="moon-phase-title">달 모양</h3>
                         <p class="data-highlight" id="moon-phase-text">정보 수집 중</p>
                         <div class="moon-graphic" id="moon-graphic" role="img" aria-label="달 위상을 불러오는 중"></div>
                     </article>
+                </div>
+                <div class="card moon-lesson-card" role="region" aria-labelledby="moon-lesson-title">
+                    <h3 id="moon-lesson-title">달 모양이 변하는 순서</h3>
+                    <p class="moon-lesson-intro">삭에서 그믐까지 달이 어떻게 변하는지 아이들과 함께 따라가 보세요.</p>
+                    <div class="moon-lesson-sequence" role="list">
+                        <div class="moon-lesson-step" role="listitem">
+                            <div class="moon-lesson-icon" data-lesson-phase="new" aria-hidden="true"></div>
+                            <div class="moon-lesson-text">
+                                <strong>삭</strong>
+                                <p>태양과 한편이라 어두워요.</p>
+                            </div>
+                        </div>
+                        <span class="moon-lesson-arrow" aria-hidden="true">→</span>
+                        <div class="moon-lesson-step" role="listitem">
+                            <div class="moon-lesson-icon" data-lesson-phase="waxing_crescent" aria-hidden="true"></div>
+                            <div class="moon-lesson-text">
+                                <strong>초승달</strong>
+                                <p>오른쪽이 살짝 밝아지기 시작해요.</p>
+                            </div>
+                        </div>
+                        <span class="moon-lesson-arrow" aria-hidden="true">→</span>
+                        <div class="moon-lesson-step" role="listitem">
+                            <div class="moon-lesson-icon" data-lesson-phase="first_quarter" aria-hidden="true"></div>
+                            <div class="moon-lesson-text">
+                                <strong>상현달</strong>
+                                <p>오른쪽 절반이 밝아진 모습이에요.</p>
+                            </div>
+                        </div>
+                        <span class="moon-lesson-arrow" aria-hidden="true">→</span>
+                        <div class="moon-lesson-step" role="listitem">
+                            <div class="moon-lesson-icon" data-lesson-phase="full" aria-hidden="true"></div>
+                            <div class="moon-lesson-text">
+                                <strong>망 (보름달)</strong>
+                                <p>둥근 달이 밤하늘을 환하게 비춰요.</p>
+                            </div>
+                        </div>
+                        <span class="moon-lesson-arrow" aria-hidden="true">→</span>
+                        <div class="moon-lesson-step" role="listitem">
+                            <div class="moon-lesson-icon" data-lesson-phase="last_quarter" aria-hidden="true"></div>
+                            <div class="moon-lesson-text">
+                                <strong>하현달</strong>
+                                <p>왼쪽 절반만 남고 다시 어두워져요.</p>
+                            </div>
+                        </div>
+                        <span class="moon-lesson-arrow" aria-hidden="true">→</span>
+                        <div class="moon-lesson-step" role="listitem">
+                            <div class="moon-lesson-icon" data-lesson-phase="waning_crescent" aria-hidden="true"></div>
+                            <div class="moon-lesson-text">
+                                <strong>그믐달</strong>
+                                <p>왼쪽에 가느다란 빛만 남아요.</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <div class="card update-card" aria-live="polite">
                     <p class="update-text">최근 업데이트: <span id="moon-updated">확인 중...</span></p>

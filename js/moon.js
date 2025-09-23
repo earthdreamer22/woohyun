@@ -7,6 +7,14 @@
     const SYNODIC_MONTH = 29.530588;
     const MOON_CACHE_KEY = 'moonPhaseCache:v1';
     let moonGraphicRenderCount = 0;
+    const LESSON_PHASE_DATA = {
+        new: { age: 0, isWaxing: true },
+        waxing_crescent: { age: SYNODIC_MONTH * 0.1, isWaxing: true },
+        first_quarter: { age: SYNODIC_MONTH * 0.25, isWaxing: true },
+        full: { age: SYNODIC_MONTH * 0.5, isWaxing: true },
+        last_quarter: { age: SYNODIC_MONTH * 0.75, isWaxing: false },
+        waning_crescent: { age: SYNODIC_MONTH * 0.9, isWaxing: false }
+    };
 
     const GRID = {
         nx: 89,
@@ -24,6 +32,7 @@
             });
         }
         hydrateStaticLocation();
+        renderMoonLessonIcons();
         fetchAllData();
     });
 
@@ -381,6 +390,24 @@
             '<circle cx="50" cy="50" r="48" fill="none" stroke="var(--moon-stroke)" stroke-width="1.5" />',
             '</svg>'
         ].join('');
+    }
+
+    function renderMoonLessonIcons() {
+        const nodes = document.querySelectorAll('[data-lesson-phase]');
+        if (!nodes.length) {
+            return;
+        }
+        nodes.forEach(node => {
+            const phaseKey = node.getAttribute('data-lesson-phase');
+            const lesson = LESSON_PHASE_DATA[phaseKey];
+            if (!lesson) {
+                return;
+            }
+            const angle = (2 * Math.PI * lesson.age) / SYNODIC_MONTH;
+            const fraction = clamp((1 - Math.cos(angle)) / 2, 0, 1) ?? 0;
+            const markup = renderMoonSVG(fraction, lesson.isWaxing, angle);
+            node.innerHTML = markup;
+        });
     }
 
     function buildClipPathFromAngle(angle, direction) {
