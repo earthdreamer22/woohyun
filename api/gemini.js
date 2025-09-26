@@ -10,6 +10,7 @@ const FALLBACK_DISTRACTORS = ['공원', '병원', '책상', '자동차', '가족
 
 module.exports = async function handler(req, res) {
     setCorsHeaders(res);
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
 
     if (req.method !== 'POST') {
         if (req.method === 'OPTIONS') {

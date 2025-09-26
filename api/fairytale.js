@@ -25,6 +25,7 @@ const MOOD_STYLES = {
 
 module.exports = async function handler(req, res) {
     setCorsHeaders(req, res);
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
 
     if (req.method !== 'POST') {
         if (req.method === 'OPTIONS') {
@@ -146,6 +147,7 @@ function setCorsHeaders(req, res) {
     } else {
         res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Accept');
     }
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
 }
 
 async function callGeminiWithFallback(apiKey, body) {
