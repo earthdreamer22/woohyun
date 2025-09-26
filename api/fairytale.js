@@ -1,7 +1,7 @@
 const GEMINI_BASE_URL = 'https://generativelanguage.googleapis.com/v1beta/models';
 const GEMINI_MODELS = [
+    'gemini-2.5-flash',
     'gemini-1.5-flash-latest',
-    'gemini-1.5-flash-001',
     'gemini-1.5-flash',
     'gemini-1.0-pro',
     'gemini-pro'
@@ -24,13 +24,16 @@ const MOOD_STYLES = {
 };
 
 module.exports = async function handler(req, res) {
+    // CORS 헤더를 먼저 설정
     setCorsHeaders(req, res);
-    res.setHeader('Access-Control-Allow-Credentials', 'true');
 
+    // OPTIONS 요청 (preflight) 처리
+    if (req.method === 'OPTIONS') {
+        return res.status(200).end();
+    }
+
+    // POST 요청만 허용
     if (req.method !== 'POST') {
-        if (req.method === 'OPTIONS') {
-            return res.status(204).end();
-        }
         res.setHeader('Allow', 'POST, OPTIONS');
         return res.status(405).json({ error: 'Method Not Allowed' });
     }
@@ -137,17 +140,26 @@ function extractTextFromGemini(payload) {
 }
 
 function setCorsHeaders(req, res) {
-    const origin = req.headers?.origin || '*';
-    res.setHeader('Access-Control-Allow-Origin', origin);
-    res.setHeader('Vary', 'Origin');
-    res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-    const requestHeaders = req.headers['access-control-request-headers'];
-    if (requestHeaders) {
-        res.setHeader('Access-Control-Allow-Headers', requestHeaders);
-    } else {
-        res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Accept');
+    // 허용할 origin 명시적으로 지정
+    const allowedOrigins = [
+        'https://earthdreamer22.github.io',
+        'http://localhost:3000',
+        'http://localhost:8080',
+        'http://127.0.0.1:5500'
+    ];
+    
+    const origin = req.headers?.origin;
+    if (allowedOrigins.includes(origin)) {
+        res.setHeader('Access-Control-Allow-Origin', origin);
+    } else if (!origin) {
+        // Origin 헤더가 없는 경우 (직접 브라우저에서 호출)
+        res.setHeader('Access-Control-Allow-Origin', '*');
     }
-    res.setHeader('Access-Control-Allow-Credentials', 'true');
+    
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Accept, Authorization, X-Requested-With');
+    res.setHeader('Access-Control-Allow-Credentials', 'false');
+    res.setHeader('Access-Control-Max-Age', '86400'); // 24시간 preflight 캐시
 }
 
 async function callGeminiWithFallback(apiKey, body) {
