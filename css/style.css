@@ -1158,14 +1158,24 @@ body.page-moon .section-alt .update-card {
   box-shadow: none;
 }
 
+.page-fairytale {
+  background-color: var(--white);
+}
+
 .page-fairytale main {
-  background-color: var(--gray-050);
+  background-color: var(--white);
 }
 
 .page-fairytale .section {
   padding: 4rem 0;
 }
 
+
+.page-fairytale .card {
+  background-color: #ffffff;
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
+}
 .story-intro {
   margin-bottom: 2rem;
 }
@@ -1183,11 +1193,11 @@ body.page-moon .section-alt .update-card {
 }
 
 .story-form fieldset {
-  border: 1px solid rgba(148, 163, 184, 0.35);
+  border: 1px solid rgba(148, 163, 184, 0.25);
   border-radius: 16px;
   padding: 1.75rem;
-  background-color: var(--white);
-  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+  background-color: #ffffff;
+  box-shadow: 0 10px 26px rgba(15, 23, 42, 0.07);
 }
 
 .story-form legend {
@@ -1220,7 +1230,7 @@ body.page-moon .section-alt .update-card {
 .story-keyword input {
   padding: 0.9rem 1rem;
   border-radius: 12px;
-  border: 1px solid rgba(148, 163, 184, 0.45);
+  border: 1px solid rgba(148, 163, 184, 0.35);
   background-color: #ffffff;
   font-size: 1rem;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
@@ -1244,9 +1254,10 @@ body.page-moon .section-alt .update-card {
   min-width: 200px;
   justify-content: center;
   background-color: #ffffff;
-  border: 1px solid rgba(148, 163, 184, 0.45);
+  border: 1px solid rgba(148, 163, 184, 0.3);
   color: var(--gray-700);
   padding-right: 2.75rem;
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.08);
 }
 
 .story-mood-button::after {
@@ -1268,7 +1279,7 @@ body.page-moon .section-alt .update-card {
   background-color: var(--deep-blue);
   color: var(--white);
   border-color: var(--deep-blue);
-  box-shadow: 0 10px 22px rgba(59, 130, 246, 0.35);
+  box-shadow: 0 12px 28px rgba(59, 130, 246, 0.35);
 }
 
 .story-mood-button.is-selected::after {
@@ -1355,9 +1366,10 @@ body.page-moon .section-alt .update-card {
   }
 
   .story-mood-button {
-    background-color: rgba(17, 25, 40, 0.85);
-    border-color: rgba(255, 255, 255, 0.2);
+    background-color: rgba(17, 25, 40, 0.82);
+    border-color: rgba(255, 255, 255, 0.25);
     color: var(--white);
+    box-shadow: 0 10px 26px rgba(0, 0, 0, 0.35);
   }
 
   .story-mood-button::after {

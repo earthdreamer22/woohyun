@@ -79,7 +79,14 @@ module.exports = async function handler(req, res) {
         if (!response.ok) {
             const errorText = await response.text();
             console.error('Gemini fairytale API error response', errorText);
-            return res.status(502).json({ error: 'Gemini API 호출에 실패했습니다.' });
+            let details = errorText || 'Unknown error';
+            try {
+                const parsed = JSON.parse(errorText);
+                details = parsed?.error?.message || parsed?.error?.status || errorText;
+            } catch (parseError) {
+                details = errorText;
+            }
+            return res.status(502).json({ error: 'Gemini API 호출에 실패했습니다.', details });
         }
 
         const payload = await response.json();
@@ -96,7 +103,8 @@ module.exports = async function handler(req, res) {
         });
     } catch (error) {
         console.error('Gemini fairytale proxy error', error);
-        return res.status(500).json({ error: '동화 생성에 실패했습니다. 잠시 후 다시 시도해주세요.' });
+        let details = error?.message || '알 수 없는 오류가 발생했습니다.';
+        return res.status(500).json({ error: '동화 생성에 실패했습니다. 잠시 후 다시 시도해주세요.', details });
     }
 };
 

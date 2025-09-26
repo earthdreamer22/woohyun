@@ -110,7 +110,8 @@
             });
 
             if (!response.ok) {
-                throw new Error(`서버 오류: ${response.status}`);
+                const errorMessage = await extractErrorMessage(response);
+                throw new Error(errorMessage);
             }
 
             const data = await response.json();
@@ -154,4 +155,29 @@
             container.appendChild(p);
         });
     }
+
+    async function extractErrorMessage(response) {
+        const fallback = `서버 오류: ${response.status}`;
+        const contentType = response.headers.get('content-type') || '';
+        try {
+            if (contentType.includes('application/json')) {
+                const payload = await response.json();
+                if (payload?.error && payload?.details) {
+                    return `${payload.error} (${payload.details})`;
+                }
+                if (payload?.error) {
+                    return String(payload.error);
+                }
+            } else {
+                const text = (await response.text()).trim();
+                if (text) {
+                    return `${fallback} - ${text}`;
+                }
+            }
+        } catch (error) {
+            console.error('오류 응답 파싱 실패', error);
+        }
+        return fallback;
+    }
+
 })();
