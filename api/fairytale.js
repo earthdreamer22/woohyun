@@ -81,8 +81,14 @@ module.exports = async function handler(req, res) {
 
     try {
         const { payload, model } = await callGeminiWithFallback(apiKey, requestBody);
+        
+        // 디버깅을 위한 응답 구조 로깅
+        console.log('Gemini API Response Structure:', JSON.stringify(payload, null, 2));
+        console.log('Model used:', model);
+        
         const story = extractTextFromGemini(payload);
         if (!story) {
+            console.log('Failed to extract text from payload:', payload);
             throw Object.assign(new Error('Gemini 응답에서 동화 텍스트를 찾을 수 없습니다.'), { status: 502 });
         }
 
@@ -130,11 +136,25 @@ function sanitizeKeywords(input) {
 }
 
 function extractTextFromGemini(payload) {
+    console.log('Extracting text from payload structure:');
+    console.log('- candidates:', payload?.candidates ? 'exists' : 'missing');
+    console.log('- candidates[0]:', payload?.candidates?.[0] ? 'exists' : 'missing');
+    console.log('- content:', payload?.candidates?.[0]?.content ? 'exists' : 'missing');
+    console.log('- parts:', payload?.candidates?.[0]?.content?.parts ? 'exists' : 'missing');
+    
     const parts = payload?.candidates?.[0]?.content?.parts;
     if (!Array.isArray(parts)) {
+        console.log('Parts is not an array:', parts);
         return '';
     }
-    return parts.map(part => part.text || '').join('').trim();
+    
+    const extractedText = parts.map(part => {
+        console.log('Processing part:', part);
+        return part.text || '';
+    }).join('').trim();
+    
+    console.log('Final extracted text length:', extractedText.length);
+    return extractedText;
 }
 
 function setCorsHeaders(req, res) {
@@ -175,6 +195,7 @@ async function callGeminiWithFallback(apiKey, body) {
 
             if (response.ok) {
                 const payload = await response.json();
+                console.log(`Successfully called ${model}, response keys:`, Object.keys(payload));
                 return { payload, model };
             }
 
