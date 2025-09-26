@@ -1345,42 +1345,4 @@ body.page-moon .section-alt .update-card {
   }
 }
 
-@media (prefers-color-scheme: dark) {
-  .page-fairytale main {
-    background-color: rgba(17, 24, 39, 0.8);
-  }
 
-  .story-form fieldset {
-    border-color: rgba(255, 255, 255, 0.1);
-    background-color: rgba(15, 23, 42, 0.6);
-  }
-
-  .story-keyword input {
-    background-color: rgba(15, 23, 42, 0.6);
-    border-color: rgba(255, 255, 255, 0.2);
-    color: var(--white);
-  }
-
-  .story-keyword input:focus {
-    border-color: var(--light-blue);
-  }
-
-  .story-mood-button {
-    background-color: rgba(17, 25, 40, 0.82);
-    border-color: rgba(255, 255, 255, 0.25);
-    color: var(--white);
-    box-shadow: 0 10px 26px rgba(0, 0, 0, 0.35);
-  }
-
-  .story-mood-button::after {
-    border-color: rgba(255, 255, 255, 0.35);
-  }
-
-  .story-mood-button.is-selected::before {
-    color: var(--deep-blue);
-  }
-
-  .story-placeholder {
-    color: rgba(255, 255, 255, 0.7);
-  }
-}

@@ -1,4 +1,11 @@
-const GEMINI_ENDPOINT = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-001:generateContent';
+const GEMINI_BASE_URL = 'https://generativelanguage.googleapis.com/v1beta/models';
+const GEMINI_MODELS = [
+    'gemini-1.5-flash-latest',
+    'gemini-1.5-flash-001',
+    'gemini-1.5-flash',
+    'gemini-1.0-pro',
+    'gemini-pro'
+];
 const FALLBACK_DISTRACTORS = ['공원', '병원', '책상', '자동차', '가족', '식사', '음식', '산책', '저녁', '아침'];
 
 module.exports = async function handler(req, res) {
@@ -28,44 +35,31 @@ module.exports = async function handler(req, res) {
     const level = typeof body.level === 'string' ? body.level : 'JLPT N3';
 
     const prompt = buildPrompt(count, level);
+    const requestBody = JSON.stringify({
+        contents: [
+            {
+                role: 'user',
+                parts: [
+                    { text: prompt }
+                ]
+            }
+        ],
+        generationConfig: {
+            temperature: 0.7,
+            maxOutputTokens: 512
+        }
+    });
 
     try {
-        const response = await fetch(`${GEMINI_ENDPOINT}?key=${apiKey}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                contents: [
-                    {
-                        role: 'user',
-                        parts: [
-                            { text: prompt }
-                        ]
-                    }
-                ],
-                generationConfig: {
-                    temperature: 0.7,
-                    maxOutputTokens: 512
-                }
-            })
-        });
-
-        if (!response.ok) {
-            const errorText = await response.text();
-            console.error('Gemini API error response', errorText);
-            return res.status(502).json({ error: 'Gemini API 호출에 실패했습니다.' });
-        }
-
-        const payload = await response.json();
+        const { payload, model } = await callGeminiWithFallback(apiKey, requestBody);
         const text = extractTextFromGemini(payload);
         if (!text) {
-            throw new Error('Gemini 응답에서 텍스트를 찾을 수 없습니다.');
+            throw Object.assign(new Error('Gemini 응답에서 텍스트를 찾을 수 없습니다.'), { status: 502 });
         }
 
         const parsed = parseQuizText(text);
         if (!parsed.length) {
-            throw new Error('응답에서 퀴즈 데이터를 구성하지 못했습니다.');
+            throw Object.assign(new Error('응답에서 퀴즈 데이터를 구성하지 못했습니다.'), { status: 502 });
         }
 
         const normalized = parsed
@@ -74,13 +68,15 @@ module.exports = async function handler(req, res) {
             .slice(0, count);
 
         if (!normalized.length) {
-            throw new Error('정상적인 항목이 생성되지 않았습니다.');
+            throw Object.assign(new Error('정상적인 항목이 생성되지 않았습니다.'), { status: 502 });
         }
 
-        return res.status(200).json({ items: normalized });
+        return res.status(200).json({ items: normalized, model });
     } catch (error) {
         console.error('Gemini proxy error', error);
-        return res.status(500).json({ error: '퀴즈 데이터를 가져오지 못했습니다.' });
+        const status = error?.status && error.status >= 400 ? error.status : 500;
+        const details = error?.message || '알 수 없는 오류가 발생했습니다.';
+        return res.status(status).json({ error: '퀴즈 데이터를 가져오지 못했습니다.', details });
     }
 };
 
@@ -105,7 +101,8 @@ function buildPrompt(count, level) {
         '- choices에는 meaning을 포함한 4개의 한국어 의미를 제공합니다.',
         '- correctIndex는 meaning이 위치한 인덱스를 정확히 나타냅니다.',
         '- 오직 JSON 배열만 출력하고 다른 텍스트는 포함하지 마세요.'
-    ].join('\n');
+    ].join('
+');
 }
 
 function extractTextFromGemini(payload) {
@@ -231,4 +228,57 @@ function setCorsHeaders(res) {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+}
+
+async function callGeminiWithFallback(apiKey, body) {
+    const headers = { 'Content-Type': 'application/json' };
+    let lastError = null;
+
+    for (const model of GEMINI_MODELS) {
+        const url = `${GEMINI_BASE_URL}/${model}:generateContent?key=${apiKey}`;
+        try {
+            const response = await fetch(url, {
+                method: 'POST',
+                headers,
+                body
+            });
+
+            if (response.ok) {
+                const payload = await response.json();
+                return { payload, model };
+            }
+
+            const errorText = await response.text();
+            console.warn(`Gemini model ${model} returned ${response.status}`, errorText);
+            if (shouldRetryModel(response.status, errorText)) {
+                lastError = new Error(errorText || `Gemini API error (${response.status})`);
+                lastError.status = response.status;
+                continue;
+            }
+
+            const error = new Error(errorText || `Gemini API error (${response.status})`);
+            error.status = response.status;
+            throw error;
+        } catch (error) {
+            if (error?.status && shouldRetryModel(error.status, error.message)) {
+                lastError = error;
+                continue;
+            }
+            throw error;
+        }
+    }
+
+    if (!lastError) {
+        lastError = new Error('사용 가능한 Gemini 모델에 접근할 수 없습니다.');
+        lastError.status = 502;
+    }
+
+    throw lastError;
+}
+
+function shouldRetryModel(status, errorText = '') {
+    const retriableStatus = status === 403 || status === 404;
+    const lower = String(errorText || '').toLowerCase();
+    const retriableText = lower.includes('not found') || lower.includes('does not have access') || lower.includes('not supported');
+    return retriableStatus || retriableText;
 }

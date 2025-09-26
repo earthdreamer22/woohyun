@@ -1,4 +1,11 @@
-const GEMINI_ENDPOINT = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-001:generateContent';
+const GEMINI_BASE_URL = 'https://generativelanguage.googleapis.com/v1beta/models';
+const GEMINI_MODELS = [
+    'gemini-1.5-flash-latest',
+    'gemini-1.5-flash-001',
+    'gemini-1.5-flash',
+    'gemini-1.0-pro',
+    'gemini-pro'
+];
 const KEYWORD_COUNT = 5;
 
 const MOOD_STYLES = {
@@ -52,64 +59,47 @@ module.exports = async function handler(req, res) {
     }
 
     const prompt = buildPrompt(limitedKeywords, mood);
+    const requestBody = JSON.stringify({
+        contents: [
+            {
+                role: 'user',
+                parts: [
+                    { text: prompt }
+                ]
+            }
+        ],
+        generationConfig: {
+            temperature: 0.85,
+            maxOutputTokens: 1100,
+            topP: 0.85
+        }
+    });
 
     try {
-        const response = await fetch(`${GEMINI_ENDPOINT}?key=${apiKey}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                contents: [
-                    {
-                        role: 'user',
-                        parts: [
-                            { text: prompt }
-                        ]
-                    }
-                ],
-                generationConfig: {
-                    temperature: 0.85,
-                    maxOutputTokens: 1100,
-                    topP: 0.85
-                }
-            })
-        });
-
-        if (!response.ok) {
-            const errorText = await response.text();
-            console.error('Gemini fairytale API error response', errorText);
-            let details = errorText || 'Unknown error';
-            try {
-                const parsed = JSON.parse(errorText);
-                details = parsed?.error?.message || parsed?.error?.status || errorText;
-            } catch (parseError) {
-                details = errorText;
-            }
-            return res.status(502).json({ error: 'Gemini API 호출에 실패했습니다.', details });
-        }
-
-        const payload = await response.json();
+        const { payload, model } = await callGeminiWithFallback(apiKey, requestBody);
         const story = extractTextFromGemini(payload);
         if (!story) {
-            throw new Error('Gemini 응답에서 동화 텍스트를 찾을 수 없습니다.');
+            throw Object.assign(new Error('Gemini 응답에서 동화 텍스트를 찾을 수 없습니다.'), { status: 502 });
         }
 
         const trimmedStory = story.trim();
         return res.status(200).json({
             story: trimmedStory,
             keywords: limitedKeywords,
-            mood: mood.label
+            mood: mood.label,
+            model
         });
     } catch (error) {
         console.error('Gemini fairytale proxy error', error);
-        let details = error?.message || '알 수 없는 오류가 발생했습니다.';
-        return res.status(500).json({ error: '동화 생성에 실패했습니다. 잠시 후 다시 시도해주세요.', details });
+        const status = error?.status && error.status >= 400 ? error.status : 500;
+        const details = error?.message || '알 수 없는 오류가 발생했습니다.';
+        return res.status(status).json({ error: '동화 생성에 실패했습니다. 잠시 후 다시 시도해주세요.', details });
     }
 };
 
 function buildPrompt(keywords, mood) {
-    const keywordList = keywords.map((keyword, index) => `${index + 1}. ${keyword}`).join('\n');
+    const keywordList = keywords.map((keyword, index) => `${index + 1}. ${keyword}`).join('
+');
     return [
         '당신은 한국어로 매력적인 아동용 동화를 쓰는 작가입니다.',
         `${mood.guideline}`,
@@ -124,7 +114,8 @@ function buildPrompt(keywords, mood) {
         keywordList,
         '',
         '위 조건을 모두 충족하는 한국어 동화를 작성하세요.'
-    ].join('\n');
+    ].join('
+');
 }
 
 function sanitizeKeywords(input) {
@@ -155,4 +146,57 @@ function setCorsHeaders(req, res) {
     } else {
         res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Accept');
     }
+}
+
+async function callGeminiWithFallback(apiKey, body) {
+    const headers = { 'Content-Type': 'application/json' };
+    let lastError = null;
+
+    for (const model of GEMINI_MODELS) {
+        const url = `${GEMINI_BASE_URL}/${model}:generateContent?key=${apiKey}`;
+        try {
+            const response = await fetch(url, {
+                method: 'POST',
+                headers,
+                body
+            });
+
+            if (response.ok) {
+                const payload = await response.json();
+                return { payload, model };
+            }
+
+            const errorText = await response.text();
+            console.warn(`Gemini model ${model} returned ${response.status}`, errorText);
+            if (shouldRetryModel(response.status, errorText)) {
+                lastError = new Error(errorText || `Gemini API error (${response.status})`);
+                lastError.status = response.status;
+                continue;
+            }
+
+            const error = new Error(errorText || `Gemini API error (${response.status})`);
+            error.status = response.status;
+            throw error;
+        } catch (error) {
+            if (error?.status && shouldRetryModel(error.status, error.message)) {
+                lastError = error;
+                continue;
+            }
+            throw error;
+        }
+    }
+
+    if (!lastError) {
+        lastError = new Error('사용 가능한 Gemini 모델에 접근할 수 없습니다.');
+        lastError.status = 502;
+    }
+
+    throw lastError;
+}
+
+function shouldRetryModel(status, errorText = '') {
+    const retriableStatus = status === 403 || status === 404;
+    const lower = String(errorText || '').toLowerCase();
+    const retriableText = lower.includes('not found') || lower.includes('does not have access') || lower.includes('not supported');
+    return retriableStatus || retriableText;
 }
