@@ -74,7 +74,7 @@ module.exports = async function handler(req, res) {
         ],
         generationConfig: {
             temperature: 0.85,
-            maxOutputTokens: 1100,
+            maxOutputTokens: 2048,
             topP: 0.85
         }
     });
@@ -85,6 +85,7 @@ module.exports = async function handler(req, res) {
         // 디버깅을 위한 응답 구조 로깅
         console.log('Gemini API Response Structure:', JSON.stringify(payload, null, 2));
         console.log('Model used:', model);
+        console.log('Finish reason:', payload?.candidates?.[0]?.finishReason);
         
         const story = extractTextFromGemini(payload);
         if (!story) {
@@ -140,21 +141,38 @@ function extractTextFromGemini(payload) {
     console.log('- candidates:', payload?.candidates ? 'exists' : 'missing');
     console.log('- candidates[0]:', payload?.candidates?.[0] ? 'exists' : 'missing');
     console.log('- content:', payload?.candidates?.[0]?.content ? 'exists' : 'missing');
-    console.log('- parts:', payload?.candidates?.[0]?.content?.parts ? 'exists' : 'missing');
     
-    const parts = payload?.candidates?.[0]?.content?.parts;
-    if (!Array.isArray(parts)) {
-        console.log('Parts is not an array:', parts);
+    const candidate = payload?.candidates?.[0];
+    if (!candidate) {
+        console.log('No candidate found in response');
         return '';
     }
     
-    const extractedText = parts.map(part => {
-        console.log('Processing part:', part);
-        return part.text || '';
-    }).join('').trim();
+    const content = candidate.content;
+    console.log('Content structure:', JSON.stringify(content, null, 2));
     
-    console.log('Final extracted text length:', extractedText.length);
-    return extractedText;
+    // Gemini 2.5 새로운 구조: content.parts 대신 content.text 또는 다른 필드 확인
+    if (content?.parts && Array.isArray(content.parts)) {
+        // 기존 구조 (Gemini 1.5)
+        const extractedText = content.parts.map(part => part.text || '').join('').trim();
+        console.log('Extracted via parts, length:', extractedText.length);
+        return extractedText;
+    }
+    
+    // Gemini 2.5의 새로운 구조 시도
+    if (content?.text) {
+        console.log('Extracted via content.text, length:', content.text.length);
+        return content.text.trim();
+    }
+    
+    // 다른 가능한 필드들 확인
+    if (typeof content === 'string') {
+        console.log('Content is string, length:', content.length);
+        return content.trim();
+    }
+    
+    console.log('Unable to extract text from content:', content);
+    return '';
 }
 
 function setCorsHeaders(req, res) {
