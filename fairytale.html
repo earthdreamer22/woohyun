@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>동화 생성기 - 신우현의 홈페이지</title>
+    <meta name="description" content="Gemini API를 활용해 키워드와 분위기를 지정하면 맞춤형 동화를 만들어드립니다.">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📖</text></svg>">
+</head>
+<body class="page-fairytale">
+    <nav>
+        <div class="nav-container">
+            <a href="index.html" class="logo">신우현</a>
+            <ul class="nav-links">
+                <li><a href="index.html">홈</a></li>
+                <li><a href="baseball.html">프로야구</a></li>
+                <li><a href="baduk.html">바둑</a></li>
+                <li><a href="game.html">게임</a></li>
+                <li><a href="game2.html">게임2</a></li>
+                <li><a href="moon.html">날씨 · 달</a></li>
+                <li><a href="fairytale.html" class="active">동화 만들기</a></li>
+                <li><a href="japanese.html">일본어</a></li>
+            </ul>
+            <div class="hamburger" onclick="toggleMobileMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <section class="section" id="fairytale-builder">
+            <div class="container">
+                <div class="page-header">
+                    <h1>📖 나만의 동화 만들기</h1>
+                    <p>키워드 5개와 원하는 분위기를 고르면 Gemini가 약 1,000자 분량의 맞춤형 동화를 지어줍니다.</p>
+                </div>
+
+                <div class="card story-intro" role="region" aria-labelledby="fairytale-howto">
+                    <h2 id="fairytale-howto">이렇게 사용해보세요</h2>
+                    <ul class="story-guidelines">
+                        <li>마음에 드는 단어 다섯 개를 입력하면 이야기 속 주요 소재가 됩니다.</li>
+                        <li>분위기 버튼에서 원하는 톤을 선택하세요. 선택한 스타일에 맞춰 글의 분위기가 달라집니다.</li>
+                        <li>모든 입력을 마치면 <strong>동화 생성</strong> 버튼이 활성화됩니다.</li>
+                        <li>버튼을 누르면 약 1,000자 분량의 완성된 동화를 확인할 수 있습니다.</li>
+                    </ul>
+                </div>
+
+                <form class="card story-form" id="fairytale-form" novalidate>
+                    <fieldset class="story-keywords" aria-labelledby="fairytale-keywords">
+                        <legend id="fairytale-keywords">동화 키워드</legend>
+                        <p class="story-tip">키워드는 명사, 장소, 감정 등 어떤 단어라도 좋습니다.</p>
+                        <div class="story-keyword-grid">
+                            <label class="story-keyword">
+                                <span>키워드 1</span>
+                                <input type="text" inputmode="text" maxlength="50" data-keyword-index="0" placeholder="예) 숲" required>
+                            </label>
+                            <label class="story-keyword">
+                                <span>키워드 2</span>
+                                <input type="text" inputmode="text" maxlength="50" data-keyword-index="1" placeholder="예) 친구" required>
+                            </label>
+                            <label class="story-keyword">
+                                <span>키워드 3</span>
+                                <input type="text" inputmode="text" maxlength="50" data-keyword-index="2" placeholder="예) 비밀 상자" required>
+                            </label>
+                            <label class="story-keyword">
+                                <span>키워드 4</span>
+                                <input type="text" inputmode="text" maxlength="50" data-keyword-index="3" placeholder="예) 별빛" required>
+                            </label>
+                            <label class="story-keyword">
+                                <span>키워드 5</span>
+                                <input type="text" inputmode="text" maxlength="50" data-keyword-index="4" placeholder="예) 용기" required>
+                            </label>
+                        </div>
+                    </fieldset>
+
+                    <fieldset class="story-mood" aria-labelledby="fairytale-mood">
+                        <legend id="fairytale-mood">분위기 선택</legend>
+                        <div class="story-mood-buttons" role="group" aria-label="동화 분위기">
+                            <button type="button" class="btn story-mood-button" data-mood="warm" aria-pressed="false">따뜻한 분위기</button>
+                            <button type="button" class="btn story-mood-button" data-mood="moral" aria-pressed="false">교훈적인 분위기</button>
+                            <button type="button" class="btn story-mood-button" data-mood="humorous" aria-pressed="false">유머러스한 분위기</button>
+                        </div>
+                    </fieldset>
+
+                    <div class="story-actions">
+                        <button class="btn" id="story-generate" type="submit" disabled>동화 생성</button>
+                        <p class="story-status" id="story-status" aria-live="polite">키워드와 분위기를 모두 입력하면 동화를 만들 수 있어요.</p>
+                    </div>
+                </form>
+
+                <div class="card story-output" id="story-card" role="region" aria-live="polite">
+                    <h2>생성된 동화</h2>
+                    <p class="story-placeholder" id="story-placeholder">아직 생성된 동화가 없습니다. 키워드를 입력하고 버튼을 눌러보세요.</p>
+                    <div id="story-output"></div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <div class="container" style="text-align: center;">
+                <a href="index.html" class="btn btn-secondary">🏠 홈으로 돌아가기</a>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 신우현의 홈페이지. 상상력을 마음껏 펼쳐보세요! 📖</p>
+        </div>
+    </footer>
+
+    <script src="js/script.js"></script>
+    <script src="js/fairytale.js"></script>
+</body>
+</html>
