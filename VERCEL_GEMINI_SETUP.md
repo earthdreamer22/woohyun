@@ -22,7 +22,7 @@
 - 로컬 개발을 할 경우 `vercel env pull`로 `.vercel/.env.*`를 내려받아 사용.
 
 ## 4. 서버리스 함수 (`api/gemini.js`)
-- Google Gemini REST API(`v1beta/models/gemini-1.5-flash-latest:generateContent`) 호출.
+- Google Gemini REST API(`v1beta/models/gemini-1.5-flash-001:generateContent`) 호출.
 - JSON 파싱/보기 보정 후 `{ items: [...] }` 구조로 응답.
 - CORS 지원: `Access-Control-Allow-Origin: *`, `OPTIONS` 프리플라이트 처리.
 - 엔드포인트 예: `https://woohyun-homepage.vercel.app/api/gemini`
