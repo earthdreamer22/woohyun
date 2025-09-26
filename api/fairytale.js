@@ -17,7 +17,7 @@ const MOOD_STYLES = {
 };
 
 module.exports = async function handler(req, res) {
-    setCorsHeaders(res);
+    setCorsHeaders(req, res);
 
     if (req.method !== 'POST') {
         if (req.method === 'OPTIONS') {
@@ -136,8 +136,15 @@ function extractTextFromGemini(payload) {
     return parts.map(part => part.text || '').join('').trim();
 }
 
-function setCorsHeaders(res) {
-    res.setHeader('Access-Control-Allow-Origin', '*');
+function setCorsHeaders(req, res) {
+    const origin = req.headers?.origin || '*';
+    res.setHeader('Access-Control-Allow-Origin', origin);
+    res.setHeader('Vary', 'Origin');
     res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+    const requestHeaders = req.headers['access-control-request-headers'];
+    if (requestHeaders) {
+        res.setHeader('Access-Control-Allow-Headers', requestHeaders);
+    } else {
+        res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Accept');
+    }
 }
