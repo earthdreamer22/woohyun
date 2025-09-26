@@ -102,8 +102,7 @@ module.exports = async function handler(req, res) {
 };
 
 function buildPrompt(keywords, mood) {
-    const keywordList = keywords.map((keyword, index) => `${index + 1}. ${keyword}`).join('
-');
+    const keywordList = keywords.map((keyword, index) => `${index + 1}. ${keyword}`).join('\n');
     return [
         '당신은 한국어로 매력적인 아동용 동화를 쓰는 작가입니다.',
         `${mood.guideline}`,
@@ -118,8 +117,7 @@ function buildPrompt(keywords, mood) {
         keywordList,
         '',
         '위 조건을 모두 충족하는 한국어 동화를 작성하세요.'
-    ].join('
-');
+    ].join('\n');
 }
 
 function sanitizeKeywords(input) {
