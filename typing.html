@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>타자연습 - 신우현의 홈페이지</title>
+    <meta name="description" content="한컴타자연습을 통해 타자 실력을 향상시켜보세요.">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⌨️</text></svg>">
+</head>
+<body class="page-typing">
+    <nav>
+        <div class="nav-container">
+            <a href="index.html" class="logo">신우현</a>
+            <ul class="nav-links">
+                <li><a href="index.html">홈</a></li>
+                <li><a href="baseball.html">프로야구</a></li>
+                <li><a href="baduk.html">바둑</a></li>
+                <li><a href="game.html">게임</a></li>
+                <li><a href="game2.html">게임2</a></li>
+                <li><a href="moon.html">날씨 · 달</a></li>
+                <li><a href="fairytale.html">동화 만들기</a></li>
+                <li><a href="typing.html" class="active">타자연습</a></li>
+            </ul>
+            <div class="hamburger" onclick="toggleMobileMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <section class="section" id="typing-practice">
+            <div class="container">
+                <div class="page-header">
+                    <h1>⌨️ 타자연습</h1>
+                    <p>한컴타자연습으로 정확하고 빠른 타자 실력을 키워보세요!</p>
+                </div>
+
+                <div class="card typing-intro" role="region" aria-labelledby="typing-intro-title">
+                    <h2 id="typing-intro-title">한컴타자연습 소개</h2>
+                    <div class="typing-features">
+                        <div class="feature-item">
+                            <h3>🎯 정확도 향상</h3>
+                            <p>체계적인 단계별 학습으로 정확한 타자 습관을 형성하세요.</p>
+                        </div>
+                        <div class="feature-item">
+                            <h3>⚡ 속도 증가</h3>
+                            <p>반복 연습을 통해 타자 속도를 점진적으로 높여보세요.</p>
+                        </div>
+                        <div class="feature-item">
+                            <h3>📊 실력 측정</h3>
+                            <p>객관적인 지표로 현재 실력을 확인하고 목표를 설정하세요.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card typing-action" role="region" aria-labelledby="typing-action-title">
+                    <h2 id="typing-action-title">타자연습 시작하기</h2>
+                    <div class="typing-button-container">
+                        <a href="https://tt.hancomtaja.com/ko" 
+                           target="_blank" 
+                           rel="noopener noreferrer"
+                           class="btn btn-primary typing-link"
+                           aria-label="한컴타자연습 사이트로 이동 (새 창에서 열림)">
+                            <span class="typing-icon">⌨️</span>
+                            <div class="typing-text">
+                                <span class="typing-title">한컴타자연습</span>
+                                <span class="typing-subtitle">tt.hancomtaja.com</span>
+                            </div>
+                            <span class="external-icon">🔗</span>
+                        </a>
+                    </div>
+                    <p class="typing-note">
+                        <strong>💡 팁:</strong> 매일 15-30분씩 꾸준히 연습하면 빠른 시간 내에 실력 향상을 경험할 수 있습니다.
+                    </p>
+                </div>
+
+                <div class="card typing-guide" role="region" aria-labelledby="typing-guide-title">
+                    <h2 id="typing-guide-title">효과적인 타자연습 방법</h2>
+                    <div class="guide-steps">
+                        <div class="step-item">
+                            <div class="step-number">1</div>
+                            <div class="step-content">
+                                <h3>올바른 자세</h3>
+                                <p>등을 곧게 펴고 손목이 자연스럽게 놓이도록 앉으세요.</p>
+                            </div>
+                        </div>
+                        <div class="step-item">
+                            <div class="step-number">2</div>
+                            <div class="step-content">
+                                <h3>손가락 위치</h3>
+                                <p>홈 포지션(ASDF, JKL;)에 손가락을 정확히 위치시키세요.</p>
+                            </div>
+                        </div>
+                        <div class="step-item">
+                            <div class="step-number">3</div>
+                            <div class="step-content">
+                                <h3>시선 관리</h3>
+                                <p>키보드를 보지 말고 화면을 보며 연습하세요.</p>
+                            </div>
+                        </div>
+                        <div class="step-item">
+                            <div class="step-number">4</div>
+                            <div class="step-content">
+                                <h3>꾸준한 연습</h3>
+                                <p>속도보다 정확도를 우선으로 매일 꾸준히 연습하세요.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <div class="container" style="text-align: center;">
+                <a href="index.html" class="btn btn-secondary">🏠 홈으로 돌아가기</a>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 신우현의 홈페이지. 꾸준한 연습으로 타자 마스터가 되어보세요! ⌨️</p>
+        </div>
+    </footer>
+
+    <script src="js/script.js"></script>
+</body>
+</html>
