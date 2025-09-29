@@ -12,7 +12,8 @@ import {
     onSnapshot,
     limit,
     startAfter,
-    getCountFromServer
+    getCountFromServer,
+    writeBatch
 } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
 // DOM 요소들
@@ -274,6 +275,9 @@ function createLetterElement(letterId, letter) {
             <button class="btn btn-outline reply-btn" data-letter-id="${letterId}">
                 💬 답장하기 (${letter.replyCount || 0})
             </button>
+            <button class="btn btn-outline delete-btn" data-letter-id="${letterId}">
+                🗑 삭제
+            </button>
         </div>
         <div class="replies-section" id="replies-${letterId}" style="display: none;">
             <!-- 답장들이 여기에 동적으로 추가됩니다 -->
@@ -283,6 +287,11 @@ function createLetterElement(letterId, letter) {
     // 답장 버튼 이벤트
     const replyBtn = div.querySelector('.reply-btn');
     replyBtn.addEventListener('click', () => toggleReplies(letterId));
+
+    const deleteBtn = div.querySelector('.delete-btn');
+    if (deleteBtn) {
+        deleteBtn.addEventListener('click', () => handleDelete(letterId));
+    }
 
     return div;
 }
@@ -525,3 +534,35 @@ window.submitReply = async function(letterId) {
         alert('답장 전송에 실패했습니다. 다시 시도해주세요.');
     }
 };
+
+async function handleDelete(letterId) {
+    const confirmed = confirm('선택한 편지를 삭제할까요? 관련된 모든 답장도 함께 삭제됩니다.');
+    if (!confirmed) {
+        return;
+    }
+
+    try {
+        showLoading(true);
+
+        const repliesRef = collection(window.firebaseDB, 'letters', letterId, 'replies');
+        const repliesSnapshot = await getDocs(repliesRef);
+
+        if (!repliesSnapshot.empty) {
+            const batch = writeBatch(window.firebaseDB);
+            repliesSnapshot.forEach(replyDoc => {
+                batch.delete(replyDoc.ref);
+            });
+            await batch.commit();
+        }
+
+        await deleteDoc(doc(window.firebaseDB, 'letters', letterId));
+        showMessage('편지를 삭제했습니다.');
+
+        await loadLetters(1);
+    } catch (error) {
+        console.error('편지 삭제 실패:', error);
+        alert('편지를 삭제하지 못했습니다. 잠시 후 다시 시도해주세요.');
+    } finally {
+        showLoading(false);
+    }
+}
