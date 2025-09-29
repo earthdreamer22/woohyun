@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     if (hamburger) {
         hamburger.addEventListener('click', function() {
-            navLinks.classList.toggle('active');
+            navLinks.classList.toggle('mobile-active');
             hamburger.classList.toggle('active');
         });
     }

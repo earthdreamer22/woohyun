@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>편지쓰기 - 신우현의 홈페이지</title>
+    <meta name="description" content="마음을 전하는 편지를 쓰고 답장을 주고받아보세요.">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💌</text></svg>">
+</head>
+<body class="page-letters">
+    <nav>
+        <div class="nav-container">
+            <a href="index.html" class="logo">신우현</a>
+            <ul class="nav-links">
+                <li><a href="index.html">홈</a></li>
+                <li><a href="baseball.html">프로야구</a></li>
+                <li><a href="baduk.html">바둑</a></li>
+                <li><a href="game.html">게임</a></li>
+                <li><a href="game2.html">게임2</a></li>
+                <li><a href="moon.html">날씨 · 달</a></li>
+                <li><a href="fairytale.html">동화 만들기</a></li>
+                <li><a href="typing.html">타자연습</a></li>
+                <li><a href="letters.html" class="active">편지쓰기</a></li>
+            </ul>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <section class="section" id="letters-main">
+            <div class="container">
+                <div class="page-header">
+                    <h1>💌 편지쓰기</h1>
+                    <p>따뜻한 마음을 담은 편지를 써보세요. 누구나 답장을 달 수 있어요!</p>
+                </div>
+
+                <!-- 편지 작성 폼 -->
+                <div class="card letter-form-card" id="letter-form-section">
+                    <h2>✍️ 새 편지 쓰기</h2>
+                    <form id="letter-form" class="letter-form">
+                        <div class="form-group">
+                            <label for="letter-title">편지 제목</label>
+                            <input type="text" id="letter-title" name="title" placeholder="편지 제목을 입력하세요" required maxlength="100">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="letter-content">편지 내용</label>
+                            <textarea id="letter-content" name="content" placeholder="마음을 담은 편지를 써보세요..." required rows="6" maxlength="1000"></textarea>
+                            <div class="char-count">
+                                <span id="char-counter">0</span>/1000
+                            </div>
+                        </div>
+
+                        <!-- 이모티콘 선택 -->
+                        <div class="form-group">
+                            <label>이모티콘 추가</label>
+                            <div class="emoji-picker">
+                                <button type="button" class="emoji-btn" data-emoji="😊">😊</button>
+                                <button type="button" class="emoji-btn" data-emoji="😢">😢</button>
+                                <button type="button" class="emoji-btn" data-emoji="😍">😍</button>
+                                <button type="button" class="emoji-btn" data-emoji="🥺">🥺</button>
+                                <button type="button" class="emoji-btn" data-emoji="😤">😤</button>
+                                <button type="button" class="emoji-btn" data-emoji="🤗">🤗</button>
+                                <button type="button" class="emoji-btn" data-emoji="💕">💕</button>
+                                <button type="button" class="emoji-btn" data-emoji="✨">✨</button>
+                                <button type="button" class="emoji-btn" data-emoji="🌟">🌟</button>
+                                <button type="button" class="emoji-btn" data-emoji="🎉">🎉</button>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="letter-author">작성자</label>
+                            <input type="text" id="letter-author" name="author" placeholder="익명" maxlength="20">
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary" id="submit-letter">편지 보내기 💌</button>
+                            <button type="button" class="btn btn-secondary" id="cancel-letter">취소</button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- 로딩 상태 -->
+                <div class="loading-spinner" id="loading" style="display: none;">
+                    <div class="spinner"></div>
+                    <p>편지를 보내는 중...</p>
+                </div>
+
+                <!-- 편지 목록 -->
+                <div class="letters-section">
+                    <div class="section-header">
+                        <h2>📮 모든 편지들</h2>
+                        <p class="letters-count">총 <span id="letters-count">0</span>개의 편지</p>
+                    </div>
+                    
+                    <div class="letters-container" id="letters-container">
+                        <!-- 편지들이 동적으로 여기에 추가됩니다 -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <div class="container" style="text-align: center;">
+                <a href="index.html" class="btn btn-secondary">🏠 홈으로 돌아가기</a>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 신우현의 홈페이지. 따뜻한 마음을 전해보세요! 💌</p>
+        </div>
+    </footer>
+
+    <!-- Firebase SDK -->
+    <script type="module" src="js/firebase-config.js"></script>
+    <script type="module" src="js/letters.js"></script>
+    <script src="js/script.js"></script>
+</body>
+</html>
