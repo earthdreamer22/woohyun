@@ -9,11 +9,22 @@ import {
     query, 
     orderBy, 
     serverTimestamp,
-    onSnapshot
+    onSnapshot,
+    limit,
+    startAfter,
+    getCountFromServer
 } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
 // DOM 요소들
 let letterForm, letterTitle, letterContent, letterAuthor, lettersContainer, loadingSpinner, charCounter;
+
+// 페이지네이션 상태
+const LETTERS_PER_PAGE = 5;
+let currentPage = 1;
+let totalLetters = 0;
+let totalPages = 0;
+let lastVisibleDoc = null;
+let firstVisibleDoc = null;
 
 // 페이지 로드 시 초기화
 document.addEventListener('DOMContentLoaded', function() {
@@ -119,6 +130,9 @@ async function handleLetterSubmit(e) {
         clearForm();
         showMessage('편지가 성공적으로 전송되었습니다! 💌');
         
+        // 첫 페이지로 리로드하여 새 편지 표시
+        await loadLetters(1);
+        
     } catch (error) {
         console.error('편지 전송 실패:', error);
         alert('편지 전송에 실패했습니다. 다시 시도해주세요.');
@@ -163,22 +177,54 @@ function showMessage(message) {
     }, 3000);
 }
 
-async function loadLetters() {
+async function loadLetters(page = 1) {
     try {
-        const lettersQuery = query(
-            collection(window.firebaseDB, 'letters'),
-            orderBy('createdAt', 'desc')
-        );
+        showLoading(true);
+        
+        // 전체 편지 수 조회
+        const totalQuery = query(collection(window.firebaseDB, 'letters'));
+        const snapshot = await getCountFromServer(totalQuery);
+        totalLetters = snapshot.data().count;
+        totalPages = Math.ceil(totalLetters / LETTERS_PER_PAGE);
+        
+        // 페이지별 편지 조회
+        let lettersQuery;
+        
+        if (page === 1) {
+            lettersQuery = query(
+                collection(window.firebaseDB, 'letters'),
+                orderBy('createdAt', 'desc'),
+                limit(LETTERS_PER_PAGE)
+            );
+        } else {
+            // 이전 페이지의 마지막 문서부터 시작
+            lettersQuery = query(
+                collection(window.firebaseDB, 'letters'),
+                orderBy('createdAt', 'desc'),
+                startAfter(lastVisibleDoc),
+                limit(LETTERS_PER_PAGE)
+            );
+        }
 
-        // 실시간 업데이트를 위한 리스너
-        onSnapshot(lettersQuery, (snapshot) => {
-            displayLetters(snapshot.docs);
-            updateLettersCount(snapshot.docs.length);
-        });
+        const lettersSnapshot = await getDocs(lettersQuery);
+        
+        // 페이지네이션 정보 업데이트
+        if (lettersSnapshot.docs.length > 0) {
+            firstVisibleDoc = lettersSnapshot.docs[0];
+            lastVisibleDoc = lettersSnapshot.docs[lettersSnapshot.docs.length - 1];
+        }
+        
+        currentPage = page;
+        
+        displayLetters(lettersSnapshot.docs);
+        updateLettersCount(totalLetters);
+        updatePagination();
 
     } catch (error) {
         console.error('편지 로드 실패:', error);
         lettersContainer.innerHTML = '<p class="error-message">편지를 불러오는 중 오류가 발생했습니다.</p>';
+    } finally {
+        showLoading(false);
     }
 }
 
@@ -252,6 +298,105 @@ function updateLettersCount(count) {
     if (countElement) {
         countElement.textContent = count;
     }
+    
+    // 페이지 정보 업데이트
+    const pageInfoElement = document.getElementById('page-info');
+    if (pageInfoElement) {
+        pageInfoElement.textContent = `페이지 ${currentPage} / ${totalPages}`;
+    }
+}
+
+function updatePagination() {
+    const paginationContainer = document.getElementById('pagination-container');
+    if (!paginationContainer) return;
+
+    paginationContainer.innerHTML = '';
+    
+    if (totalPages <= 1) {
+        paginationContainer.style.display = 'none';
+        return;
+    }
+    
+    paginationContainer.style.display = 'flex';
+
+    // 이전 버튼
+    const prevBtn = document.createElement('button');
+    prevBtn.className = `btn btn-outline pagination-btn ${currentPage === 1 ? 'disabled' : ''}`;
+    prevBtn.textContent = '이전';
+    prevBtn.disabled = currentPage === 1;
+    prevBtn.addEventListener('click', () => {
+        if (currentPage > 1) {
+            goToPage(currentPage - 1);
+        }
+    });
+    paginationContainer.appendChild(prevBtn);
+
+    // 페이지 번호들
+    const startPage = Math.max(1, currentPage - 2);
+    const endPage = Math.min(totalPages, currentPage + 2);
+
+    if (startPage > 1) {
+        const firstBtn = createPageButton(1);
+        paginationContainer.appendChild(firstBtn);
+        
+        if (startPage > 2) {
+            const ellipsis = document.createElement('span');
+            ellipsis.textContent = '...';
+            ellipsis.className = 'pagination-ellipsis';
+            paginationContainer.appendChild(ellipsis);
+        }
+    }
+
+    for (let i = startPage; i <= endPage; i++) {
+        const pageBtn = createPageButton(i);
+        paginationContainer.appendChild(pageBtn);
+    }
+
+    if (endPage < totalPages) {
+        if (endPage < totalPages - 1) {
+            const ellipsis = document.createElement('span');
+            ellipsis.textContent = '...';
+            ellipsis.className = 'pagination-ellipsis';
+            paginationContainer.appendChild(ellipsis);
+        }
+        
+        const lastBtn = createPageButton(totalPages);
+        paginationContainer.appendChild(lastBtn);
+    }
+
+    // 다음 버튼
+    const nextBtn = document.createElement('button');
+    nextBtn.className = `btn btn-outline pagination-btn ${currentPage === totalPages ? 'disabled' : ''}`;
+    nextBtn.textContent = '다음';
+    nextBtn.disabled = currentPage === totalPages;
+    nextBtn.addEventListener('click', () => {
+        if (currentPage < totalPages) {
+            goToPage(currentPage + 1);
+        }
+    });
+    paginationContainer.appendChild(nextBtn);
+}
+
+function createPageButton(pageNum) {
+    const btn = document.createElement('button');
+    btn.className = `btn pagination-btn ${pageNum === currentPage ? 'pagination-active' : 'btn-outline'}`;
+    btn.textContent = pageNum;
+    btn.addEventListener('click', () => goToPage(pageNum));
+    return btn;
+}
+
+async function goToPage(page) {
+    if (page === currentPage) return;
+    
+    // 페이지 간 이동을 위해 문서 캐시 관리가 필요
+    // 간단한 구현을 위해 전체 재로드
+    await loadLetters(page);
+    
+    // 페이지 상단으로 스크롤
+    document.getElementById('letters-main').scrollIntoView({ 
+        behavior: 'smooth', 
+        block: 'start' 
+    });
 }
 
 async function toggleReplies(letterId) {
