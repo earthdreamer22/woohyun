@@ -2073,7 +2073,7 @@ body.page-moon .section-alt .update-card {
 }
 
 .key-btn {
-  aspect-ratio: 1;
+  height: 70px;
   font-size: 1.5rem;
   font-weight: 600;
   border: none;
@@ -2084,7 +2084,9 @@ body.page-moon .section-alt .update-card {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   user-select: none;
   border-radius: 8px;
-  padding: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .key-btn:hover {
@@ -2098,21 +2100,12 @@ body.page-moon .section-alt .update-card {
 
 /* 특수 버튼 (*, #) */
 .key-special {
-  background: var(--gray-200) !important;
-  color: var(--gray-700) !important;
-  font-size: 1.5rem !important;
+  background: #6b7280 !important;
+  color: var(--white) !important;
 }
 
 .key-special:hover {
-  background: var(--gray-300) !important;
-}
-
-/* 지우기/확인 버튼 공통 */
-.key-clear,
-.key-confirm {
-  aspect-ratio: auto;
-  font-size: 1rem !important;
-  padding: 1rem 1.5rem;
+  background: #4b5563 !important;
 }
 
 /* 지우기 버튼 */
