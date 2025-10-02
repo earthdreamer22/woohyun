@@ -2176,7 +2176,7 @@ body.page-moon .section-alt .update-card {
   }
 }
 
-@media (max-width: 1024px) {
+@media (max-width: 768px) {
   .keypad {
     max-width: 320px;
     gap: 0.75rem;
