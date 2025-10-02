@@ -1,12 +1,10 @@
 // 패스워드 게임 기능 구현
 (function() {
     // DOM 요소
-    const keypad = document.getElementById('keypad');
     const passwordDisplay = document.getElementById('passwordDots');
     const modeBadge = document.getElementById('modeBadge');
     const modeInstruction = document.getElementById('modeInstruction');
     const resultMessage = document.getElementById('resultMessage');
-    const styleButtons = document.querySelectorAll('.btn-style');
     const clearBtn = document.getElementById('clearBtn');
     const confirmBtn = document.getElementById('confirmBtn');
     const keyButtons = document.querySelectorAll('.key-btn[data-value]');
@@ -15,20 +13,6 @@
     let savedPassword = '';
     let currentInput = '';
     let isParentMode = true;
-
-    // 키패드 스타일 전환
-    styleButtons.forEach(btn => {
-        btn.addEventListener('click', function() {
-            // 버튼 활성화 상태 변경
-            styleButtons.forEach(b => b.classList.remove('active'));
-            this.classList.add('active');
-
-            // 키패드 스타일 변경
-            const style = this.dataset.style;
-            keypad.classList.remove('phone-style', 'doorlock-style');
-            keypad.classList.add(`${style}-style`);
-        });
-    });
 
     // 숫자 버튼 클릭 이벤트
     keyButtons.forEach(btn => {
