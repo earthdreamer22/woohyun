@@ -2084,6 +2084,7 @@ body.page-moon .section-alt .update-card {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   user-select: none;
   border-radius: 8px;
+  padding: 1rem;
 }
 
 .key-btn:hover {
@@ -2098,18 +2099,26 @@ body.page-moon .section-alt .update-card {
 /* 특수 버튼 (*, #) */
 .key-special {
   background: var(--gray-200) !important;
-  color: var(--text-muted) !important;
+  color: var(--gray-700) !important;
+  font-size: 1.5rem !important;
 }
 
 .key-special:hover {
   background: var(--gray-300) !important;
 }
 
+/* 지우기/확인 버튼 공통 */
+.key-clear,
+.key-confirm {
+  aspect-ratio: auto;
+  font-size: 1rem !important;
+  padding: 1rem 1.5rem;
+}
+
 /* 지우기 버튼 */
 .key-clear {
   background: #ef4444 !important;
   color: var(--white) !important;
-  font-size: 1.1rem !important;
   grid-column: span 1;
 }
 
@@ -2121,7 +2130,6 @@ body.page-moon .section-alt .update-card {
 .key-confirm {
   background: var(--green) !important;
   color: var(--white) !important;
-  font-size: 1.1rem !important;
   grid-column: span 2;
 }
 
