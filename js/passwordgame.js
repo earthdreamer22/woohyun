@@ -34,7 +34,7 @@
 
     // 숫자 입력 처리
     function addNumber(num) {
-        if (currentInput.length < 10) { // 최대 10자리
+        if (currentInput.length < 12) { // 최대 12자리
             currentInput += num;
             updateDisplay();
         }
