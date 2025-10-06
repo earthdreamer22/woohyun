@@ -124,6 +124,18 @@
             if (placeholder) {
                 placeholder.hidden = true;
             }
+
+            // 저장 버튼 표시
+            const saveSectionEl = document.getElementById('story-save-section');
+            const saveBtnEl = document.getElementById('save-fairytale-btn');
+            if (saveSectionEl) {
+                saveSectionEl.style.display = 'block';
+                if (saveBtnEl) {
+                    saveBtnEl.disabled = false;
+                    saveBtnEl.textContent = '💾 동화 저장';
+                }
+            }
+
             statusElement.textContent = '멋진 동화가 완성되었어요! 마음에 들지 않으면 키워드나 분위기를 바꿔 다시 시도해보세요.';
         } catch (error) {
             console.error('동화 생성 실패', error);

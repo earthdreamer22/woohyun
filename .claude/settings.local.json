@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$(cat <<''EOF''\nAdd password game feature for children\n\n부모가 패스워드를 설정하고 자녀가 기억해서 입력하는 교육용 게임을 추가했습니다.\n\n- passwordgame.html: 패스워드 게임 메인 페이지\n- js/passwordgame.js: 게임 로직 구현 (부모/아이 모드, 패스워드 검증)\n- css/style.css: 전화기 패드 및 도어락 키패드 스타일링\n- index.html: 메인 페이지에 패스워드 게임 링크 추가\n\n기능:\n- 두 가지 키패드 스타일 (전화기 패드, 도어락)\n- 부모 모드: 패스워드 설정\n- 아이 모드: 패스워드 입력 및 검증\n- 정답/오답 애니메이션 효과\n- 키보드 입력 지원\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")",
+      "Bash(git push:*)",
+      "Bash(git commit -m \"$(cat <<''EOF''\nUpdate password game keypad layout and responsive design\n\n키패드 UI를 단일 스타일로 통합하고 레이아웃을 개선했습니다.\n\n- passwordgame.html: 키패드 스타일 선택 UI 제거, * # 버튼 추가\n- css/style.css: 전화기/도어락 스타일 코드 제거, 단일 키패드 스타일 적용\n- js/passwordgame.js: 스타일 전환 코드 제거\n- 키패드 레이아웃: 1-9, *0#, 지우기/확인 (5줄 구조)\n- 미디어 쿼리: 768px → 1024px (아이패드 미니 대응)\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")",
+      "Bash(git commit -m \"$(cat <<''EOF''\nRevert media query to 768px for consistent mobile experience\n\n미디어 쿼리를 768px로 되돌려 모바일과 PC 모두 자연스럽게 표시되도록 수정했습니다.\n\n- css/style.css: 미디어 쿼리 1024px → 768px 변경\n- 모바일 디바이스: 768px 이하에서 최적화된 레이아웃\n- PC: 768px 초과 시 기본 레이아웃\n- 아이패드 미니: 세로(768px) 모바일, 가로(1024px) PC 스타일\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")",
+      "Read(//c/Users/yoonj/Downloads/**)",
+      "Bash(git commit -m \"$(cat <<''EOF''\nFix keypad button size and text consistency\n\n키패드 버튼 크기와 텍스트 크기를 일관되게 수정했습니다.\n\n- 숫자 버튼(1-9, 0): 정사각형 유지, 1.5rem 텍스트\n- 특수 버튼(*, #): 더 진한 색상으로 가독성 향상\n- 지우기/확인 버튼: aspect-ratio auto로 직사각형 형태\n- 모든 버튼에 padding 추가로 터치 영역 개선\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")",
+      "Bash(git commit -m \"$(cat <<''EOF''\nFix keypad button sizes to be consistent\n\n모든 키패드 버튼을 동일한 높이로 통일했습니다.\n\n- aspect-ratio 제거하고 고정 height: 70px 적용\n- 모든 버튼 텍스트 크기 1.5rem으로 통일\n- * # 버튼 배경색을 더 진하게 변경하여 가독성 개선\n- flexbox로 텍스트 중앙 정렬\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")",
+      "Bash(git checkout:*)",
+      "Bash(git reset:*)",
+      "Bash(git commit:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

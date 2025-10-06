@@ -23,6 +23,8 @@
                 <li><a href="fairytale.html" class="active">동화 만들기</a></li>
                 <li><a href="typing.html">타자연습</a></li>
                 <li><a href="letters.html">편지쓰기</a></li>
+                <li><a href="passwordgame.html">패스워드 게임</a></li>
+                <li><a href="saved-fairytales.html">저장된 동화</a></li>
             </ul>
             <div class="hamburger">
                 <span></span>
@@ -97,6 +99,10 @@
                     <h2>생성된 동화</h2>
                     <p class="story-placeholder" id="story-placeholder">아직 생성된 동화가 없습니다. 키워드를 입력하고 버튼을 눌러보세요.</p>
                     <div id="story-output"></div>
+                    <div class="story-save-section" id="story-save-section" style="display: none; margin-top: 2rem;">
+                        <button class="btn" id="save-fairytale-btn" type="button">💾 동화 저장</button>
+                        <p class="story-status" id="save-status" style="margin-top: 1rem;"></p>
+                    </div>
                 </div>
             </div>
         </section>
@@ -115,6 +121,60 @@
     </footer>
 
     <script src="js/script.js"></script>
+    <script type="module">
+        import { db } from './js/firebase-config.js';
+        import { collection, addDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/11.1.0/firebase-firestore.js';
+
+        // fairytale.js의 변수들을 전역으로 접근
+        window.saveFairytale = async function() {
+            const storyOutput = document.getElementById('story-output').textContent;
+            const saveStatus = document.getElementById('save-status');
+            const saveBtn = document.getElementById('save-fairytale-btn');
+
+            if (!storyOutput || storyOutput.trim() === '') {
+                saveStatus.textContent = '저장할 동화가 없습니다.';
+                saveStatus.style.color = 'red';
+                return;
+            }
+
+            // 키워드와 분위기 정보 가져오기
+            const keywordInputs = document.querySelectorAll('input[data-keyword-index]');
+            const keywords = Array.from(keywordInputs).map(input => input.value.trim()).filter(Boolean);
+
+            const selectedMood = document.querySelector('.story-mood-button.is-selected');
+            const mood = selectedMood ? selectedMood.dataset.mood : '';
+
+            try {
+                saveBtn.disabled = true;
+                saveStatus.textContent = '저장 중...';
+                saveStatus.style.color = 'var(--deep-blue)';
+
+                await addDoc(collection(db, 'fairytales'), {
+                    content: storyOutput,
+                    keywords: keywords,
+                    mood: mood,
+                    createdAt: serverTimestamp()
+                });
+
+                saveStatus.textContent = '✅ 동화가 저장되었습니다!';
+                saveStatus.style.color = 'var(--green)';
+                saveBtn.disabled = true;
+                saveBtn.textContent = '✅ 저장 완료';
+
+                setTimeout(() => {
+                    saveStatus.textContent = '';
+                }, 3000);
+            } catch (error) {
+                console.error('동화 저장 실패:', error);
+                saveStatus.textContent = '❌ 저장에 실패했습니다. 다시 시도해주세요.';
+                saveStatus.style.color = 'red';
+                saveBtn.disabled = false;
+            }
+        };
+
+        // 저장 버튼 이벤트 리스너
+        document.getElementById('save-fairytale-btn').addEventListener('click', saveFairytale);
+    </script>
     <script src="js/fairytale.js"></script>
 </body>
 </html>

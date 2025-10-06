@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>저장된 동화 - 신우현의 홈페이지</title>
+    <meta name="description" content="내가 만든 동화들을 다시 읽어보세요.">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/fairytale.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📚</text></svg>">
+</head>
+<body class="page-fairytale">
+    <nav>
+        <div class="nav-container">
+            <a href="index.html" class="logo">신우현</a>
+            <ul class="nav-links">
+                <li><a href="index.html">홈</a></li>
+                <li><a href="baseball.html">프로야구</a></li>
+                <li><a href="baduk.html">바둑</a></li>
+                <li><a href="game.html">게임</a></li>
+                <li><a href="game2.html">게임2</a></li>
+                <li><a href="moon.html">날씨 · 달</a></li>
+                <li><a href="fairytale.html">동화 만들기</a></li>
+                <li><a href="typing.html">타자연습</a></li>
+                <li><a href="letters.html">편지쓰기</a></li>
+                <li><a href="passwordgame.html">패스워드 게임</a></li>
+                <li><a href="saved-fairytales.html" class="active">저장된 동화</a></li>
+            </ul>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <section class="section" id="saved-fairytales">
+            <div class="container">
+                <div class="page-header">
+                    <h1>📚 저장된 동화</h1>
+                    <p>내가 만든 소중한 동화들을 다시 읽어보세요.</p>
+                </div>
+
+                <div class="card" style="text-align: center; margin-bottom: 2rem;">
+                    <p id="loading-message">동화 목록을 불러오는 중...</p>
+                    <p id="empty-message" style="display: none;">아직 저장된 동화가 없습니다. <a href="fairytale.html">동화 만들러 가기</a></p>
+                </div>
+
+                <div id="fairytales-list" class="card-grid"></div>
+            </div>
+        </section>
+
+        <section class="section">
+            <div class="container" style="text-align: center;">
+                <a href="fairytale.html" class="btn">📖 새 동화 만들기</a>
+                <a href="index.html" class="btn btn-secondary">🏠 홈으로 돌아가기</a>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 신우현의 홈페이지. 상상력을 마음껏 펼쳐보세요! 📖</p>
+        </div>
+    </footer>
+
+    <script src="js/script.js"></script>
+    <script type="module">
+        import { db } from './js/firebase-config.js';
+        import { collection, query, orderBy, getDocs } from 'https://www.gstatic.com/firebasejs/11.1.0/firebase-firestore.js';
+
+        const loadingMessage = document.getElementById('loading-message');
+        const emptyMessage = document.getElementById('empty-message');
+        const fairytalesList = document.getElementById('fairytales-list');
+
+        async function loadFairytales() {
+            try {
+                const q = query(collection(db, 'fairytales'), orderBy('createdAt', 'desc'));
+                const querySnapshot = await getDocs(q);
+
+                loadingMessage.style.display = 'none';
+
+                if (querySnapshot.empty) {
+                    emptyMessage.style.display = 'block';
+                    return;
+                }
+
+                querySnapshot.forEach((doc) => {
+                    const data = doc.data();
+                    const fairytaleCard = createFairytaleCard(doc.id, data);
+                    fairytalesList.appendChild(fairytaleCard);
+                });
+
+            } catch (error) {
+                console.error('동화 불러오기 실패:', error);
+                loadingMessage.textContent = '동화를 불러오는 중 오류가 발생했습니다.';
+                loadingMessage.style.color = 'red';
+            }
+        }
+
+        function createFairytaleCard(id, data) {
+            const card = document.createElement('article');
+            card.className = 'card fairytale-card';
+            card.style.cursor = 'pointer';
+
+            const date = data.createdAt ? new Date(data.createdAt.toDate()).toLocaleDateString('ko-KR', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            }) : '날짜 없음';
+
+            const moodLabels = {
+                'warm': '따뜻한',
+                'moral': '교훈적인',
+                'humorous': '유머러스한'
+            };
+            const moodText = moodLabels[data.mood] || data.mood;
+
+            // 키워드 배열을 문자열로 변환
+            let keywordsText = '';
+            if (Array.isArray(data.keywords)) {
+                keywordsText = data.keywords.filter(k => k).join(', ');
+            } else if (typeof data.keywords === 'object') {
+                keywordsText = Object.values(data.keywords).filter(k => k).join(', ');
+            }
+
+            const contentPreview = data.content.length > 150
+                ? data.content.substring(0, 150) + '...'
+                : data.content;
+
+            card.innerHTML = `
+                <div class="fairytale-header">
+                    <span class="fairytale-date">📅 ${date}</span>
+                    <span class="fairytale-mood">🎭 ${moodText}</span>
+                </div>
+                ${keywordsText ? `<p class="fairytale-keywords"><strong>키워드:</strong> ${keywordsText}</p>` : ''}
+                <div class="fairytale-preview">
+                    <p>${contentPreview}</p>
+                </div>
+                <div class="fairytale-full" style="display: none;">
+                    <p>${data.content}</p>
+                </div>
+                <button class="btn btn-secondary toggle-content" style="margin-top: 1rem;">전체 보기</button>
+            `;
+
+            const toggleBtn = card.querySelector('.toggle-content');
+            const preview = card.querySelector('.fairytale-preview');
+            const full = card.querySelector('.fairytale-full');
+
+            toggleBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (full.style.display === 'none') {
+                    preview.style.display = 'none';
+                    full.style.display = 'block';
+                    toggleBtn.textContent = '접기';
+                } else {
+                    preview.style.display = 'block';
+                    full.style.display = 'none';
+                    toggleBtn.textContent = '전체 보기';
+                }
+            });
+
+            return card;
+        }
+
+        // 페이지 로드 시 동화 불러오기
+        loadFairytales();
+    </script>
+</body>
+</html>
