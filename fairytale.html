@@ -172,8 +172,13 @@
             }
         };
 
-        // 저장 버튼 이벤트 리스너
-        document.getElementById('save-fairytale-btn').addEventListener('click', saveFairytale);
+        // 저장 버튼 클릭 이벤트 연결
+        document.addEventListener('DOMContentLoaded', () => {
+            const saveBtn = document.getElementById('save-fairytale-btn');
+            if (saveBtn) {
+                saveBtn.addEventListener('click', window.saveFairytale);
+            }
+        });
     </script>
     <script src="js/fairytale.js"></script>
 </body>
