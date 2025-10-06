@@ -167,10 +167,12 @@
   gap: 1.2rem;
   color: var(--text-primary);
   line-height: 1.8;
+  font-size: 1.25rem;
 }
 
 .story-output p {
   margin: 0;
+  font-size: 1.25rem;
 }
 
 .story-placeholder {
