@@ -91,13 +91,17 @@
         statusElement.textContent = '이제 동화를 만들 준비가 되었어요! “동화 생성” 버튼을 눌러보세요.';
     }
 
-    async function generateStory({ generateButton, statusElement, storyContainer, placeholder }) {
+    async function generateStory({ generateButton, statusElement, storyContainer, placeholder }, retryCount = 0) {
+        const MAX_RETRIES = 2;
         state.generating = true;
         const originalText = generateButton.textContent;
-        generateButton.textContent = '생성 중...';
+        generateButton.textContent = retryCount > 0 ? `재시도 중 (${retryCount}/${MAX_RETRIES})...` : '생성 중...';
         updateGenerateState(generateButton, statusElement);
 
         try {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 55000); // 55초 타임아웃
+
             const response = await fetch(FAIRYTALE_ENDPOINT, {
                 method: 'POST',
                 headers: {
@@ -106,11 +110,22 @@
                 body: JSON.stringify({
                     keywords: state.keywords,
                     mood: state.mood
-                })
+                }),
+                signal: controller.signal
             });
+
+            clearTimeout(timeoutId);
 
             if (!response.ok) {
                 const errorMessage = await extractErrorMessage(response);
+
+                // 504 타임아웃 또는 503 에러인 경우 재시도
+                if ((response.status === 504 || response.status === 503) && retryCount < MAX_RETRIES) {
+                    statusElement.textContent = `서버가 응답하지 않아 재시도합니다... (${retryCount + 1}/${MAX_RETRIES})`;
+                    await new Promise(resolve => setTimeout(resolve, 2000)); // 2초 대기
+                    return generateStory({ generateButton, statusElement, storyContainer, placeholder }, retryCount + 1);
+                }
+
                 throw new Error(errorMessage);
             }
 
@@ -139,7 +154,21 @@
             statusElement.textContent = '멋진 동화가 완성되었어요! 마음에 들지 않으면 키워드나 분위기를 바꿔 다시 시도해보세요.';
         } catch (error) {
             console.error('동화 생성 실패', error);
-            statusElement.textContent = '동화를 만들지 못했습니다. 네트워크 상태를 확인하거나 잠시 후 다시 시도해주세요.';
+
+            // AbortError는 타임아웃 의미
+            if (error.name === 'AbortError' && retryCount < MAX_RETRIES) {
+                statusElement.textContent = `요청 시간이 초과되어 재시도합니다... (${retryCount + 1}/${MAX_RETRIES})`;
+                await new Promise(resolve => setTimeout(resolve, 2000)); // 2초 대기
+                return generateStory({ generateButton, statusElement, storyContainer, placeholder }, retryCount + 1);
+            }
+
+            if (error.name === 'AbortError') {
+                statusElement.textContent = '요청 시간이 초과되었습니다. 서버가 바쁠 수 있으니 잠시 후 다시 시도해주세요.';
+            } else if (retryCount >= MAX_RETRIES) {
+                statusElement.textContent = `${MAX_RETRIES}번 시도했지만 실패했습니다. 잠시 후 다시 시도해주세요.`;
+            } else {
+                statusElement.textContent = '동화를 만들지 못했습니다. 네트워크 상태를 확인하거나 잠시 후 다시 시도해주세요.';
+            }
         } finally {
             state.generating = false;
             generateButton.textContent = originalText;
