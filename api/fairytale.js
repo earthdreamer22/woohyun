@@ -138,41 +138,50 @@ function sanitizeKeywords(input) {
 }
 
 function extractTextFromGemini(payload) {
-    console.log('Extracting text from payload structure:');
-    console.log('- candidates:', payload?.candidates ? 'exists' : 'missing');
-    console.log('- candidates[0]:', payload?.candidates?.[0] ? 'exists' : 'missing');
-    console.log('- content:', payload?.candidates?.[0]?.content ? 'exists' : 'missing');
-    
+    console.log('Full Gemini payload:', JSON.stringify(payload, null, 2));
+
     const candidate = payload?.candidates?.[0];
     if (!candidate) {
         console.log('No candidate found in response');
         return '';
     }
-    
-    const content = candidate.content;
-    console.log('Content structure:', JSON.stringify(content, null, 2));
-    
-    // Gemini 2.5 새로운 구조: content.parts 대신 content.text 또는 다른 필드 확인
-    if (content?.parts && Array.isArray(content.parts)) {
-        // 기존 구조 (Gemini 1.5)
-        const extractedText = content.parts.map(part => part.text || '').join('').trim();
-        console.log('Extracted via parts, length:', extractedText.length);
-        return extractedText;
+
+    console.log('Candidate structure:', JSON.stringify(candidate, null, 2));
+
+    // 1. content.parts[].text (Gemini 1.5 표준)
+    if (candidate.content?.parts && Array.isArray(candidate.content.parts)) {
+        const extractedText = candidate.content.parts.map(part => part.text || '').join('').trim();
+        if (extractedText) {
+            console.log('✓ Extracted via content.parts, length:', extractedText.length);
+            return extractedText;
+        }
     }
-    
-    // Gemini 2.5의 새로운 구조 시도
-    if (content?.text) {
-        console.log('Extracted via content.text, length:', content.text.length);
-        return content.text.trim();
+
+    // 2. content.text (일부 버전)
+    if (candidate.content?.text) {
+        console.log('✓ Extracted via content.text, length:', candidate.content.text.length);
+        return candidate.content.text.trim();
     }
-    
-    // 다른 가능한 필드들 확인
-    if (typeof content === 'string') {
-        console.log('Content is string, length:', content.length);
-        return content.trim();
+
+    // 3. text 필드 직접 (일부 응답 구조)
+    if (candidate.text) {
+        console.log('✓ Extracted via candidate.text, length:', candidate.text.length);
+        return candidate.text.trim();
     }
-    
-    console.log('Unable to extract text from content:', content);
+
+    // 4. content가 문자열인 경우
+    if (typeof candidate.content === 'string') {
+        console.log('✓ Content is string, length:', candidate.content.length);
+        return candidate.content.trim();
+    }
+
+    // 5. output 필드 (대안 구조)
+    if (candidate.output) {
+        console.log('✓ Extracted via candidate.output');
+        return String(candidate.output).trim();
+    }
+
+    console.error('❌ Unable to extract text from candidate:', candidate);
     return '';
 }
 
