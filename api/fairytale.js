@@ -74,7 +74,7 @@ module.exports = async function handler(req, res) {
         ],
         generationConfig: {
             temperature: 0.85,
-            maxOutputTokens: 2048,  // 8192 → 2048로 줄여서 응답 속도 개선
+            maxOutputTokens: 4096,  // 2048 → 4096 (600-800자 동화에 충분)
             topP: 0.85,
             candidateCount: 1
         }
