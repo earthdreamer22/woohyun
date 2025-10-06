@@ -1,8 +1,8 @@
 const GEMINI_BASE_URL = 'https://generativelanguage.googleapis.com/v1beta/models';
 const GEMINI_MODELS = [
-    'gemini-2.5-flash',
-    'gemini-1.5-flash-latest',
+    'gemini-1.5-flash-latest',  // 가장 빠른 모델 우선
     'gemini-1.5-flash',
+    'gemini-2.5-flash',
     'gemini-1.0-pro',
     'gemini-pro'
 ];
@@ -74,8 +74,9 @@ module.exports = async function handler(req, res) {
         ],
         generationConfig: {
             temperature: 0.85,
-            maxOutputTokens: 8192,
-            topP: 0.85
+            maxOutputTokens: 2048,  // 8192 → 2048로 줄여서 응답 속도 개선
+            topP: 0.85,
+            candidateCount: 1
         }
     });
 
@@ -115,15 +116,15 @@ function buildPrompt(keywords, mood) {
         `${mood.guideline}`,
         '주요 조건을 지켜주세요:',
         '- 반드시 아래 키워드를 모두 포함시키되, 자연스럽게 서사 속에 녹여냅니다.',
-        '- 이야기 길이는 공백 제외 약 1000자 내외가 되도록 하며, 최소 900자 이상 작성합니다.',
+        '- 이야기 길이는 공백 제외 약 600-800자 정도로 작성합니다.',
         '- 서론-전개-결말 구조를 갖추고 인물의 감정과 배경을 구체적으로 묘사합니다.',
-        '- 문단을 3~4개로 나누고 각 문단은 줄바꿈으로 구분합니다.',
+        '- 문단을 3개로 나누고 각 문단은 줄바꿈으로 구분합니다.',
         '- 마지막 문단에서 어린 독자에게 여운이 남는 마무리 문장을 제공합니다.',
         '',
         '키워드 목록:',
         keywordList,
         '',
-        '위 조건을 모두 충족하는 한국어 동화를 작성하세요.'
+        '위 조건을 모두 충족하는 한국어 동화를 간결하게 작성하세요.'
     ].join('\n');
 }
 
@@ -205,11 +206,17 @@ async function callGeminiWithFallback(apiKey, body) {
     for (const model of GEMINI_MODELS) {
         const url = `${GEMINI_BASE_URL}/${model}:generateContent?key=${apiKey}`;
         try {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 25000); // 25초 타임아웃 (Vercel 30초 제한 고려)
+
             const response = await fetch(url, {
                 method: 'POST',
                 headers,
-                body
+                body,
+                signal: controller.signal
             });
+
+            clearTimeout(timeoutId);
 
             if (response.ok) {
                 const payload = await response.json();
@@ -229,6 +236,12 @@ async function callGeminiWithFallback(apiKey, body) {
             error.status = response.status;
             throw error;
         } catch (error) {
+            if (error.name === 'AbortError') {
+                console.warn(`Gemini model ${model} timed out, trying next model...`);
+                lastError = new Error(`Request timeout for ${model}`);
+                lastError.status = 504;
+                continue;
+            }
             if (error?.status && shouldRetryModel(error.status, error.message)) {
                 lastError = error;
                 continue;
