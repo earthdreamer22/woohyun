@@ -241,3 +241,17 @@
   padding-top: 1rem;
   border-top: 1px solid var(--gray-200);
 }
+
+/* 모바일 가로 모드에서 카드 그리드 2열 */
+@media (min-width: 568px) and (max-width: 1023px) and (orientation: landscape) {
+  .card-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* 태블릿 가로 모드에서 카드 그리드 2-3열 */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .card-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
