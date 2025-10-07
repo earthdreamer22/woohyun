@@ -494,6 +494,35 @@ footer {
   display: flex;
   gap: 0.75rem;
   align-items: center;
+  flex-wrap: wrap;
+}
+
+.btn-flag-toggle {
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.btn-flag-toggle .flag-icon {
+  display: inline-block;
+  transition: transform 0.3s ease;
+}
+
+.btn-flag-toggle[aria-pressed="true"] {
+  background-color: #ef4444;
+  border-color: #dc2626;
+  color: var(--white);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+}
+
+.btn-flag-toggle[aria-pressed="true"] .flag-icon {
+  transform: scale(1.2);
+  animation: wave 0.5s ease;
+}
+
+@keyframes wave {
+  0%, 100% { transform: rotate(0deg) scale(1.2); }
+  25% { transform: rotate(-15deg) scale(1.2); }
+  75% { transform: rotate(15deg) scale(1.2); }
 }
 
 .game-controls select {

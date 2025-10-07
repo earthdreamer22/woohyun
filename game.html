@@ -54,6 +54,9 @@
                                 <option value="medium" selected>보통 · 12x12 · 지뢰 22개</option>
                                 <option value="hard">어려움 · 14x14 · 지뢰 30개</option>
                             </select>
+                            <button class="btn btn-flag-toggle" id="flagToggle" type="button" aria-pressed="false">
+                                <span class="flag-icon">🚩</span> 깃발 모드
+                            </button>
                             <button class="btn" id="resetGame" type="button">다시 시작</button>
                         </div>
                         <div class="game-stats" aria-live="polite">
@@ -62,7 +65,7 @@
                             <span>시간: <strong id="timerDisplay">0</strong>s</span>
                         </div>
                     </div>
-                    <div id="statusMessage" class="game-status" role="status" aria-live="polite">첫 칸을 열어보세요! 길게 눌러 깃발을 표시할 수 있어요.</div>
+                    <div id="statusMessage" class="game-status" role="status" aria-live="polite">첫 칸을 열어보세요! 깃발 모드 버튼을 눌러 깃발을 표시할 수 있어요.</div>
                     <div id="minefield" class="minefield" role="grid" aria-label="폭탄찾기 게임판"></div>
                 </article>
                 <div class="card-grid card-stack" style="margin-top: 2rem;">
@@ -70,8 +73,8 @@
                         <h3 id="game-howto">🎯 플레이 방법</h3>
                         <p>첫 칸을 열면 지뢰가 없는 안전지대가 펼쳐지고, 숫자는 주변 8칸의 지뢰 개수를 뜻합니다. 깃발을 활용해 지뢰 위치를 표시하세요.</p>
                         <ul class="game-tips">
-                            <li>짧게 클릭(탭)하면 해당 칸을 엽니다</li>
-                            <li>오른쪽 클릭, 두 손가락 탭 또는 길게 눌러 깃발을 토글합니다</li>
+                            <li>클릭(탭)하면 해당 칸을 엽니다</li>
+                            <li>깃발 모드 버튼을 눌러 깃발 꽂기 모드로 전환할 수 있습니다</li>
                             <li>모든 지뢰를 표시하거나 안전한 칸을 모두 열면 승리합니다</li>
                         </ul>
                     </article>
@@ -101,12 +104,10 @@
                 medium: { width: 12, height: 12, mines: 22 },
                 hard: { width: 14, height: 14, mines: 30 }
             };
-            const LONG_PRESS_DELAY = 500;
-            const pointerTimers = new Map();
-
             const minefieldEl = document.getElementById('minefield');
             const difficultyEl = document.getElementById('difficulty');
             const resetBtn = document.getElementById('resetGame');
+            const flagToggleBtn = document.getElementById('flagToggle');
             const mineTotalEl = document.getElementById('mineTotal');
             const flagCountEl = document.getElementById('flagCount');
             const timerDisplayEl = document.getElementById('timerDisplay');
@@ -120,6 +121,7 @@
             let timerId = null;
             let secondsElapsed = 0;
             let gameOver = false;
+            let flagMode = false;
 
             function indexFromXY(x, y) {
                 return y * boardConfig.width + x;
@@ -164,6 +166,16 @@
                 statusMessageEl.textContent = message;
             }
 
+            function toggleFlagMode() {
+                flagMode = !flagMode;
+                flagToggleBtn.setAttribute('aria-pressed', flagMode);
+                if (flagMode) {
+                    setStatus('깃발 모드 활성화! 셀을 터치하여 깃발을 표시하세요.');
+                } else {
+                    setStatus('일반 모드! 셀을 터치하여 열어보세요.');
+                }
+            }
+
             function resetGame() {
                 stopTimer();
                 boardGenerated = false;
@@ -172,9 +184,9 @@
                 secondsElapsed = 0;
                 timerDisplayEl.textContent = '0';
                 gameOver = false;
+                flagMode = false;
+                flagToggleBtn.setAttribute('aria-pressed', 'false');
                 minefieldEl.innerHTML = '';
-                pointerTimers.forEach(({ timerId }) => clearTimeout(timerId));
-                pointerTimers.clear();
 
                 const config = difficultyMap[difficultyEl.value];
                 boardConfig = { ...config };
@@ -188,7 +200,7 @@
                     cellButton.type = 'button';
                     cellButton.setAttribute('data-index', index);
                     cellButton.setAttribute('aria-label', '닫힌 칸');
-                    cellButton.addEventListener('click', handleReveal);
+                    cellButton.addEventListener('click', handleCellClick);
                     cellButton.addEventListener('contextmenu', handleFlag);
                     cellButton.addEventListener('auxclick', event => {
                         if (event.button === 1) {
@@ -196,10 +208,6 @@
                             handleChord(event);
                         }
                     });
-                    cellButton.addEventListener('pointerdown', event => handlePointerDown(event, index));
-                    cellButton.addEventListener('pointerup', event => handlePointerUp(event, index));
-                    cellButton.addEventListener('pointerleave', event => cancelPointerTimer(event.pointerId));
-                    cellButton.addEventListener('pointercancel', event => cancelPointerTimer(event.pointerId));
 
                     minefieldEl.appendChild(cellButton);
                     return {
@@ -212,7 +220,7 @@
                 });
 
                 updateStats();
-                setStatus('첫 칸을 열어보세요! 길게 눌러 깃발을 표시할 수 있어요.');
+                setStatus('첫 칸을 열어보세요! 깃발 모드 버튼을 눌러 깃발을 표시할 수 있어요.');
             }
 
             function generateBoard(firstIndex) {
@@ -247,10 +255,15 @@
                 }
             }
 
-            function handleReveal(event) {
+            function handleCellClick(event) {
                 event.preventDefault();
                 const index = Number(event.currentTarget.dataset.index);
-                attemptReveal(index);
+
+                if (flagMode) {
+                    toggleFlag(index);
+                } else {
+                    attemptReveal(index);
+                }
             }
 
             function attemptReveal(index) {
@@ -370,47 +383,9 @@
                 }
             }
 
-            function handlePointerDown(event, index) {
-                if (event.pointerType !== 'touch' && event.pointerType !== 'pen') return;
-                if (gameOver) return;
-                event.preventDefault();
-                cancelPointerTimer(event.pointerId);
-                const state = {
-                    index,
-                    longPressTriggered: false
-                };
-                state.timerId = setTimeout(() => {
-                    state.longPressTriggered = true;
-                    toggleFlag(index);
-                }, LONG_PRESS_DELAY);
-                pointerTimers.set(event.pointerId, state);
-            }
-
-            function handlePointerUp(event, index) {
-                if (event.pointerType !== 'touch' && event.pointerType !== 'pen') return;
-                event.preventDefault();
-                const state = pointerTimers.get(event.pointerId);
-                if (state) {
-                    clearTimeout(state.timerId);
-                    pointerTimers.delete(event.pointerId);
-                    if (!state.longPressTriggered) {
-                        attemptReveal(index);
-                    }
-                } else {
-                    attemptReveal(index);
-                }
-            }
-
-            function cancelPointerTimer(pointerId) {
-                const state = pointerTimers.get(pointerId);
-                if (state) {
-                    clearTimeout(state.timerId);
-                    pointerTimers.delete(pointerId);
-                }
-            }
-
             difficultyEl.addEventListener('change', resetGame);
             resetBtn.addEventListener('click', resetGame);
+            flagToggleBtn.addEventListener('click', toggleFlagMode);
             minefieldEl.addEventListener('contextmenu', event => event.preventDefault());
 
             resetGame();
