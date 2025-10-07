@@ -100,7 +100,7 @@
 
         try {
             const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 55000); // 55초 타임아웃
+            const timeoutId = setTimeout(() => controller.abort(), 90000); // 90초 타임아웃 (모바일 고려)
 
             const response = await fetch(FAIRYTALE_ENDPOINT, {
                 method: 'POST',
