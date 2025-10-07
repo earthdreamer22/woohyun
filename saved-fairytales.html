@@ -47,7 +47,7 @@
                     <p id="empty-message" style="display: none;">아직 저장된 동화가 없습니다. <a href="fairytale.html">동화 만들러 가기</a></p>
                 </div>
 
-                <div id="fairytales-list" class="fairytales-container"></div>
+                <div id="fairytales-list" class="fairytales-container" style="display: grid; gap: 1.5rem;"></div>
             </div>
         </section>
 
@@ -164,8 +164,27 @@
             return card;
         }
 
+        // 반응형 그리드 레이아웃 적용
+        function applyResponsiveGrid() {
+            const container = document.getElementById('fairytales-list');
+            if (!container) return;
+
+            const width = window.innerWidth;
+            if (width >= 1200) {
+                container.style.gridTemplateColumns = 'repeat(3, 1fr)';
+            } else if (width >= 768) {
+                container.style.gridTemplateColumns = 'repeat(2, 1fr)';
+            } else {
+                container.style.gridTemplateColumns = '1fr';
+            }
+        }
+
         // 페이지 로드 시 동화 불러오기
         loadFairytales();
+
+        // 반응형 레이아웃 적용
+        applyResponsiveGrid();
+        window.addEventListener('resize', applyResponsiveGrid);
     </script>
 </body>
 </html>
