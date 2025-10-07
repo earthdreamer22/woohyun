@@ -242,22 +242,9 @@
   border-top: 1px solid var(--gray-200);
 }
 
-/* 저장된 동화 컨테이너 - 편지쓰기 스타일 참고 */
+/* 저장된 동화 컨테이너 - 편지쓰기처럼 1열 세로 배열 */
 .fairytales-container {
   display: grid;
   gap: 1.5rem;
-}
-
-/* 모바일 가로 및 태블릿에서 2열 그리드 */
-@media (min-width: 768px) {
-  .fairytales-container {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-/* 데스크탑에서 3열 그리드 */
-@media (min-width: 1200px) {
-  .fairytales-container {
-    grid-template-columns: repeat(3, 1fr);
-  }
+  grid-template-columns: 1fr;
 }
