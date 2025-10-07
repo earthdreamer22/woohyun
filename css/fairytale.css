@@ -242,18 +242,22 @@
   border-top: 1px solid var(--gray-200);
 }
 
-/* 저장된 동화 페이지: 모바일 가로 모드에서 카드 그리드 2열 */
-@media (min-width: 568px) and (max-width: 1023px) and (orientation: landscape) {
-  body.page-saved-fairytales .card-grid,
-  body.page-saved-fairytales.loaded .card-grid {
-    grid-template-columns: repeat(2, 1fr) !important;
+/* 저장된 동화 컨테이너 - 편지쓰기 스타일 참고 */
+.fairytales-container {
+  display: grid;
+  gap: 1.5rem;
+}
+
+/* 모바일 가로 및 태블릿에서 2열 그리드 */
+@media (min-width: 768px) {
+  .fairytales-container {
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 
-/* 저장된 동화 페이지: 태블릿 가로 모드에서 카드 그리드 2열 */
-@media (min-width: 768px) and (max-width: 1023px) {
-  body.page-saved-fairytales .card-grid,
-  body.page-saved-fairytales.loaded .card-grid {
-    grid-template-columns: repeat(2, 1fr) !important;
+/* 데스크탑에서 3열 그리드 */
+@media (min-width: 1200px) {
+  .fairytales-container {
+    grid-template-columns: repeat(3, 1fr);
   }
 }
