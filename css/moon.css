@@ -372,3 +372,48 @@ body.page-moon .section-alt .update-card {
     font-size: 1.8rem;
   }
 }
+
+.moon-embed-card {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  align-items: center;
+  text-align: center;
+}
+
+.moon-iframe-container {
+  position: relative;
+  width: 100%;
+  min-height: clamp(420px, 70vh, 820px);
+  border-radius: 18px;
+  overflow: hidden;
+  background: var(--white);
+  box-shadow: inset 0 0 0 1px rgba(30, 58, 138, 0.08);
+}
+
+.moon-iframe-container iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.moon-iframe-container .loading {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.moon-embed-note {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+}
+
+@media (max-width: 768px) {
+  .moon-iframe-container {
+    min-height: 480px;
+  }
+}
