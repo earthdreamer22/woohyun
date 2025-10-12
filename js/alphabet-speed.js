@@ -347,7 +347,7 @@
     }
 
     function formatOptionLabel(item) {
-        return `${item.char} (${item.nameKo} · ${item.caseLabel})`;
+        return item.nameKo;
     }
 
     function setSettingsDisabled(disabled) {
