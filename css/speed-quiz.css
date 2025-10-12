@@ -1,8 +1,8 @@
-body.page-katakana {
+body.page-speed {
   background-color: var(--gray-100);
 }
 
-body.page-katakana main {
+body.page-speed main {
   background: transparent;
 }
 
@@ -163,7 +163,7 @@ body.page-katakana main {
   transition: width 0.1s linear;
 }
 
-#timer-value {
+.timer-value {
   display: inline-block;
   margin-top: 0.3rem;
   font-weight: 600;
@@ -180,7 +180,7 @@ body.page-katakana main {
   margin-bottom: 1rem;
 }
 
-.katakana-character {
+.speed-character {
   font-size: clamp(5rem, 12vw, 8rem);
   font-weight: 700;
   color: var(--deep-blue);

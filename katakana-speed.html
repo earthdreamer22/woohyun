@@ -6,10 +6,10 @@
     <title>가타카나 스피드 게임 - 신우현의 홈페이지</title>
     <meta name="description" content="가타카나 46글자를 랜덤으로 학습하는 5지선다형 스피드 퀴즈 게임입니다.">
     <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/katakana.css">
+    <link rel="stylesheet" href="css/speed-quiz.css">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🈂</text></svg>">
 </head>
-<body class="page-katakana">
+<body class="page-speed page-katakana">
     <nav>
         <div class="nav-container">
             <a href="index.html" class="logo">신우현</a>
@@ -23,6 +23,7 @@
                 <li><a href="fairytale.html">동화 만들기</a></li>
                 <li><a href="typing.html">타자연습</a></li>
                 <li><a href="katakana-speed.html" class="active">가타카나 스피드</a></li>
+                <li><a href="alphabet-speed.html">알파벳 스피드</a></li>
                 <li><a href="letters.html">편지쓰기</a></li>
                 <li><a href="passwordgame.html">패스워드 게임</a></li>
                 <li><a href="saved-fairytales.html">저장된 동화</a></li>
@@ -81,13 +82,13 @@
                             <div class="timer-bar">
                                 <div class="timer-fill" id="timer-fill"></div>
                             </div>
-                            <span id="timer-value">0.0초</span>
+                            <span id="timer-value" class="timer-value">0.0초</span>
                         </div>
                     </div>
 
                     <div class="question-area">
                         <p class="question-prompt">이 가타카나의 독음은 무엇일까요?</p>
-                        <div class="katakana-character" id="katakana-char" aria-live="assertive" aria-atomic="true">ア</div>
+                        <div class="speed-character" id="katakana-char" aria-live="assertive" aria-atomic="true">ア</div>
                     </div>
 
                     <div class="options" id="options" role="group" aria-label="독음 선택지">

@@ -87,6 +87,12 @@ function initializePageFeatures() {
         case 'moon.html':
             initializeMoonPage();
             break;
+        case 'katakana-speed.html':
+            initializeKatakanaPage();
+            break;
+        case 'alphabet-speed.html':
+            initializeAlphabetPage();
+            break;
         default:
             break;
     }
@@ -115,6 +121,16 @@ function initializeGame2Page() {
 function initializeMoonPage() {
     console.log('달 정보 페이지 초기화');
     // moon.html 전용 동작은 js/moon.js에서 처리합니다.
+}
+
+function initializeKatakanaPage() {
+    console.log('가타카나 스피드 페이지 초기화');
+    // 주 기능은 js/katakana-speed.js에서 처리합니다.
+}
+
+function initializeAlphabetPage() {
+    console.log('알파벳 스피드 페이지 초기화');
+    // 주 기능은 js/alphabet-speed.js에서 처리합니다.
 }
 
 // 페이지 로드 완료 후 초기화
