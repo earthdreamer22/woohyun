@@ -1,0 +1,270 @@
+body.page-katakana {
+  background-color: var(--gray-100);
+}
+
+body.page-katakana main {
+  background: transparent;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.settings-card,
+.game-card,
+.results-card {
+  margin-top: 2rem;
+}
+
+.settings-card .card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.settings-note {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+}
+
+.settings-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.setting {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.setting-label {
+  font-weight: 600;
+}
+
+.setting-hint,
+.setting-value {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.setting input[type="number"] {
+  padding: 0.6rem 0.75rem;
+  border-radius: 10px;
+  border: 1px solid var(--gray-200);
+  font-size: 1rem;
+}
+
+.setting input[type="range"] {
+  width: 100%;
+}
+
+.setting-toggle {
+  align-items: flex-start;
+}
+
+.toggle {
+  position: relative;
+  display: inline-flex;
+  width: 52px;
+  height: 28px;
+  border-radius: 999px;
+}
+
+.toggle input {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.toggle-slider {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--gray-200);
+  transition: background 0.2s ease;
+}
+
+.toggle-slider::after {
+  content: '';
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--white);
+  box-shadow: var(--shadow);
+  transition: transform 0.2s ease;
+}
+
+.toggle input:checked + .toggle-slider {
+  background: var(--light-blue);
+}
+
+.toggle input:checked + .toggle-slider::after {
+  transform: translateX(24px);
+}
+
+.setting input:focus-visible,
+.toggle input:focus-visible + .toggle-slider {
+  outline: 3px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+.game-card {
+  padding: 2.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.game-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 2rem;
+}
+
+.game-meta {
+  margin: 0;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.timer {
+  min-width: 200px;
+  text-align: right;
+}
+
+.timer-bar {
+  position: relative;
+  width: 100%;
+  height: 10px;
+  border-radius: 999px;
+  background: var(--gray-200);
+  overflow: hidden;
+}
+
+.timer-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background: linear-gradient(90deg, var(--light-blue), var(--mid-blue));
+  transition: width 0.1s linear;
+}
+
+#timer-value {
+  display: inline-block;
+  margin-top: 0.3rem;
+  font-weight: 600;
+  color: var(--deep-blue);
+}
+
+.question-area {
+  text-align: center;
+}
+
+.question-prompt {
+  font-size: 1.1rem;
+  color: var(--text-muted);
+  margin-bottom: 1rem;
+}
+
+.katakana-character {
+  font-size: clamp(5rem, 12vw, 8rem);
+  font-weight: 700;
+  color: var(--deep-blue);
+  margin: 0 auto;
+  line-height: 1;
+}
+
+.options {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+}
+
+.option-btn {
+  padding: 1rem;
+  border-radius: 14px;
+  border: 1px solid transparent;
+  background: var(--white);
+  box-shadow: var(--shadow);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border 0.18s ease;
+}
+
+.option-btn:hover:not([disabled]) {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.option-btn.correct {
+  border-color: rgba(16, 185, 129, 0.6);
+  background: rgba(16, 185, 129, 0.12);
+  color: var(--deep-blue);
+}
+
+.option-btn.incorrect {
+  border-color: rgba(239, 68, 68, 0.6);
+  background: rgba(239, 68, 68, 0.12);
+}
+
+.option-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.8;
+}
+
+.feedback {
+  min-height: 1.5rem;
+  text-align: center;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.feedback.success {
+  color: var(--green);
+}
+
+.feedback.error {
+  color: #ef4444;
+}
+
+.results-card {
+  text-align: center;
+}
+
+.results-actions {
+  margin-top: 1.5rem;
+  display: flex;
+  justify-content:center;
+  gap: 1rem;
+}
+
+@media (max-width: 768px) {
+  .game-card {
+    padding: 1.8rem;
+  }
+
+  .game-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .timer {
+    width: 100%;
+    text-align: left;
+  }
+}
